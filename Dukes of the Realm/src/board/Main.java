@@ -1,4 +1,7 @@
 package board;
+
+import game.Battlefield;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +29,7 @@ public class Main extends Application{
 	private Pane playfieldLayer;
 	private Scene scene;
 	private AnimationTimer gameLoop;
+	private Battlefield bf;
 
 	Group root;
 
@@ -34,21 +38,21 @@ public class Main extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		root = new Group();
 		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-		
+
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		
+
 		playfieldLayer = new Pane();
 		root.getChildren().add(playfieldLayer);
-		
+
 		loadGame();
-		
-				
+
+
 	}
 	public void loadGame()
 	{
-		
+
 	}
 	public static void main(String[] args) {
 		launch(args);
