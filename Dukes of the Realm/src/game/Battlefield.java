@@ -18,7 +18,7 @@ public class Battlefield {
         for (int i=0; i < nb_castles; i++) {
             int x = rnd.nextInt(this.width);
             int y = rnd.nextInt(this.width);
-            Castle c = new Castle(i, layer, x, y);
+            Castle c = new Castle(i, 0, layer, x, y);
             this.castles.add(c);
         }
     }

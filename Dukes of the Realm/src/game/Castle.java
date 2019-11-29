@@ -14,8 +14,8 @@ public class Castle extends Sprite{
 	private Direction door;
 
 	public Castle(int id, int owner, Pane layer, int x, int y) {
-		Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
-		super(layer, c, x, y, 4);
+		super(layer, (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR), x, y, 4);
+		// Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
 		this.id = id;
 		this.owner = owner;
 		this.target = -1;
