@@ -12,8 +12,10 @@ public class Sprite {
     public Sprite(Pane layer, Color c, int x, int y, int size) {
         this.rect = new Rectangle(x, y, size, size);
         this.rect.setFill(c);
+        this.x=x;
+        this.y=y;
         this.layer = layer;
-        addToLayer();
+        
     }
 
     public void addToLayer() { this.layer.getChildren().add(rect); }
@@ -26,7 +28,7 @@ public class Sprite {
     public int getY() { return this.y; }
 
     public Rectangle getShape() { return this.rect; }
-    public int getSize() { return this.rect.getWidth(); }
+    public int getSize() { return (int) this.rect.getWidth(); }
 
     public boolean isIn(int x, int y) {
         if (x >= this.x && x <= this.x + this.getSize()) {
