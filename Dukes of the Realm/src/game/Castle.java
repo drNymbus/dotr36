@@ -14,7 +14,7 @@ public class Castle extends Sprite{
 	private Direction door;
 
 	public Castle(int id, int owner, Pane layer, int x, int y) {
-		super(layer, (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR), x, y, 4);
+		super(layer, (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR), x, y, 40);
 		// Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
 		this.id = id;
 		this.owner = owner;
@@ -46,6 +46,13 @@ public class Castle extends Sprite{
 			this.reserve++;
 			this.production.remove(0);
 		}
+	}
+	
+	public double distance(Castle c)
+	{
+		double tmpX = Math.pow((c.getX()-this.getX()), 2);
+		double tmpY = Math.pow((c.getY()-this.getY()), 2);
+		return Math.sqrt(tmpX+tmpY);
 	}
 
 }
