@@ -14,8 +14,10 @@ public class Sprite {
         this.rect = new Rectangle(x, y, size, size);
         this.rect.setFill(c);
         this.color = c;
+        this.x=x;
+        this.y=y;
         this.layer = layer;
-        addToLayer();
+        
     }
 
     public void addToLayer() { this.layer.getChildren().add(rect); }

@@ -11,6 +11,10 @@ public class Settings {
 	public static final int GAME_HEIGHT = 50;
 
 	public static final int NB_CASTLES = 5;
+	public static final int CASTLE_SIZE = 40;
+
+	public static final int SIZE_CASTLE= 4;
+	public static final int SIZE_SOLDIER= 4;
 
 	public static final int SIZE_CASTLE= 4;
 	public static final int SIZE_SOLDIER= 4;

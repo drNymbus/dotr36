@@ -47,6 +47,13 @@ public class Castle extends Sprite{
 			this.production.remove(0);
 		}
 	}
+	
+	public double distance(Castle c)
+	{
+		double tmpX = Math.pow((c.getX()-this.getX()), 2);
+		double tmpY = Math.pow((c.getY()-this.getY()), 2);
+		return Math.sqrt(tmpX+tmpY);
+	}
 
 	private Soldier createSoldier(int id, Pane layer) {
 		if (this.target == -1) {return null;}

@@ -3,6 +3,10 @@ import game.*;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import board.Input;
+import board.Settings;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
 public class Battlefield {
@@ -13,8 +17,9 @@ public class Battlefield {
     private int nbSoldiers;
 
     private Pane layer;
+    private Input input;
 
-    public Battlefield(int nb_castles, Pane layer, int w, int h) {
+    public Battlefield(int nb_castles, Pane layer, Input in, int w, int h) {
     	this.castles = new ArrayList<Castle>();
         this.nbCastles = nb_castles;
     	this.soldiers = new ArrayList<Soldier>(); // array accessible by id then get the list of castle id id;
@@ -79,6 +84,11 @@ public class Battlefield {
 
         }
     }
-
-
+  
+    public void processInput(Input input, long now) {
+        if (input.isExit()) {
+            Platform.exit();
+            System.exit(0);
+        }
+    }
 }
