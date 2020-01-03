@@ -13,11 +13,9 @@ public class Settings {
 	public static final int NB_CASTLES = 5;
 	public static final int CASTLE_SIZE = 40;
 
-	public static final int SIZE_CASTLE= 4;
+	public static final int SIZE_CASTLE= 40;
 	public static final int SIZE_SOLDIER= 4;
 
-	public static final int SIZE_CASTLE= 4;
-	public static final int SIZE_SOLDIER= 4;
 
 	public static final Color NEUTRAL_COLOR = Color.GREY;
 	public static final Color ALLY_COLOR = Color.BLUE;

@@ -19,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -32,9 +33,10 @@ public class Main extends Application {
 	private AnimationTimer gameLoop;
 	private Battlefield bf;
 	private Input input;
-	private ArrayList<HBox> text = new ArrayList<>(); 
+	private Castle currentcastle = null;
+	private ArrayList<HBox> text = new ArrayList<>();
 	Group root;
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		root = new Group();
@@ -47,76 +49,119 @@ public class Main extends Application {
 		playfieldLayer = new Pane();
 		root.getChildren().add(playfieldLayer);
 		loadGame();
-	}
 
-	public void loadGame() {
-		Battlefield bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				bf.processInput(input, now);
-			
+				if (now % 5 == 0) { // slowing down the turn
+					if (!bf.pause) {
+						bf.processInput(input, now);
+						bf.update();
+						update_display();
+					} else
+						bf.processInput(input, now);
+				}
 			}
 		};
 		gameLoop.start();
 	};
 
-	
 	public void displayInfo() {
-		
+
 		HBox infoOwner = new HBox();
-		Text textOwner= new Text("Propriétaire:");
+		Text textOwner = new Text("Propriétaire:");
 		infoOwner.getChildren().add(textOwner);
 		text.add(infoOwner);
-		infoOwner.relocate(50, 750);	
-		
+		infoOwner.relocate(670, 50);
+
 		HBox infoLevel = new HBox();
-		Text textLevel= new Text("Niveau du chateau:");
+		Text textLevel = new Text("Niveau du chateau:");
 		infoLevel.getChildren().add(textLevel);
-		infoLevel.relocate(250, 750);	
+		infoLevel.relocate(670, 100);
 		text.add(infoLevel);
-		
+
 		HBox infoTresor = new HBox();
-		Text textTresor= new Text("Trésor:");
+		Text textTresor = new Text("Trésor:");
 		infoTresor.getChildren().add(textTresor);
-		infoTresor.relocate(450, 750);	
+		infoTresor.relocate(670, 150);
 		text.add(infoTresor);
-		
+
 		HBox infoSoldat = new HBox();
-		Text textSoldat= new Text("Soldat:");
+		Text textSoldat = new Text("Soldat:");
 		infoSoldat.getChildren().add(textSoldat);
-		infoSoldat.relocate(650, 750);	
+		infoSoldat.relocate(670, 200);
 		text.add(infoSoldat);
 		root.getChildren().addAll(text);
-	
+
 	}
+
+	public void update_display() {
+		if (currentcastle == null)
+			return;
+		else {
+			((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + currentcastle.getLevel());
+			((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + currentcastle.getTresor());
+			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + currentcastle.getNbSoldiers());
+
+		}
+
+	}
+
 	public void loadGame() {
-		playfieldLayer.setPrefSize(700, 700);
-		playfieldLayer.setLayoutX(50);
-		playfieldLayer.setLayoutY(50);
+		playfieldLayer.setPrefSize(650, 800);
+		playfieldLayer.setLayoutX(0);
+		playfieldLayer.setLayoutY(0);
 		playfieldLayer.setStyle("-fx-background-color: PapayaWhip ;");
 		input = new Input(scene);
 		input.addListeners();
 		displayInfo();
 		// creating battlefield
-		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, 700, 700);
+		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, 650, 800);
 		// ally castle will always be 0 when loading
-		Castle a = bf.getCastles().get(0);
-		a.getShape().setOnMousePressed(e -> {
-			((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n"+a.getOwner());
-			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n"+a.getSoldiers());
-			
+		playfieldLayer.setOnMousePressed(e -> {
+			((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n");
+			((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n");
+			((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n");
+			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n");
+			currentcastle = null;
 			e.consume();
+		});
+		for (int i = 0; i < 5; i++) {
+			Castle a = bf.getCastles().get(i);
 
-		});
-		a.getShape().setOnContextMenuRequested(e -> {
-			ContextMenu contextMenu = new ContextMenu();
-			MenuItem produce = new MenuItem("Produce");
-			MenuItem attack = new MenuItem("Attack");
-			// produce.setOnAction(evt -> System.out.println(ally.getid()));
-			contextMenu.getItems().addAll(produce, attack);
-			contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
-		});
+			a.getShape().setOnMouseClicked(e -> {
+				// if(e.getButton()==MouseButton.SECONDARY)return;
+				currentcastle = a;
+				switch (a.getOwner()) {
+				case -1:
+					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy");
+					break;
+				case 1:
+					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally");
+					break;
+				default:
+					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral");
+
+					break;
+				}
+
+				((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + a.getLevel());
+				((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + a.getTresor());
+				((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + a.getNbSoldiers());
+				e.consume();
+
+			});
+			if (a.getOwner() == 1) {
+				a.getShape().setOnContextMenuRequested(e -> {
+					ContextMenu contextMenu = new ContextMenu();
+					MenuItem produce = new MenuItem("Produce");
+					MenuItem attack = new MenuItem("Attack");
+					produce.setOnAction(evt -> a.addProd());
+					contextMenu.getItems().addAll(produce, attack);
+					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
+				});
+			}
+		}
 	}
 
 	public static void main(String[] args) {

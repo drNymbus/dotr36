@@ -14,17 +14,28 @@ public class Castle extends Sprite{
 	private int target;
 	private Direction door;
 
-	public Castle(int id, int owner, Pane layer, int x, int y, Direction d) {
-		super(layer, (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR), x, y, 4);
+	private int tresor;
+	private int level;
+	
+		public Castle(int id, int owner, Pane layer, int x, int y, Direction d) {
+		super(layer, (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR), x, y, Settings.SIZE_CASTLE);
 		// Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
 		this.id = id;
 		this.owner = owner;
 		this.target = -1;
-		this.reserve = 0;
 		this.production = new ArrayList<Integer>();
 		this.door = d;
-		// this.soldiers = new ArrayList<Soldier>();
-	}
+		this.soldiers = new ArrayList<Soldier>();
+		this.soldiers.add(new Soldier(id, owner, -1, layer, super.getColor(), x, y));
+		this.reserve = this.soldiers.size();
+		
+		}
+	//getter setter
+	public int getTresor() { return tresor; }	
+	public void setTresor(int tresor) { this.tresor = tresor; }
+	
+	public int getLevel() { return level; }
+	public void setLevel(int level) { this.level = level; }
 
 	public int getId() { return this.id; }
 
@@ -80,5 +91,11 @@ public class Castle extends Sprite{
 
 		while (this.production.size() > 0) this.production.remove(0);
 	}
-
+	public void update() {
+		if(owner==0)
+			tresor=tresor+(level);
+		else
+			tresor=tresor+(10*level);
+	}
+	
 }
