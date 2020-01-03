@@ -21,9 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-
-
-public class Main extends Application{
+public class Main extends Application {
 	private Random rnd = new Random();
 
 	private Pane playfieldLayer;
@@ -47,13 +45,12 @@ public class Main extends Application{
 		root.getChildren().add(playfieldLayer);
 
 		loadGame();
-
-
 	}
-	public void loadGame()
-	{
 
+	public void loadGame() {
+		Battlefield bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
