@@ -17,6 +17,7 @@ public class Sprite {
         this.x=x;
         this.y=y;
         this.layer = layer;
+        this.addToLayer();
     }
 
     public void addToLayer() { this.layer.getChildren().add(rect); }
@@ -40,4 +41,11 @@ public class Sprite {
         }
         return false;
     }
+
+    public double distance(Sprite s) {
+		double tmpX = Math.pow((s.getX() - this.getX()), 2);
+		double tmpY = Math.pow((s.getY() - this.getY()), 2);
+		return Math.sqrt(tmpX + tmpY);
+	}
+
 }

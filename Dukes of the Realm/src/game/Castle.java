@@ -12,7 +12,7 @@ public class Castle extends Sprite {
 	private int owner;
 	private int reserve;
 
-	private ArrayList<Integer> production;
+	private ProductionTab production;
 	private ArrayList<Soldier> soldiers;
 	private int target;
 	private Direction door;
@@ -29,17 +29,20 @@ public class Castle extends Sprite {
 		this.id = id;
 		this.owner = owner;
 		this.target = -1;
-		this.production = new ArrayList<Integer>();
+
+		this.production = new ProductionTab();
+		this.soldiers = new ArrayList<Soldier>();
 		this.door = d;
-		this.reserve = 1;
+		this.reserve = 0;
 		Random rnd = new Random();
 		if(owner==0)
 		{
 			this.level=(1+rnd.nextInt(3));
 			this.tresor=(rnd.nextInt(100));
-		}else
+		}else{
 			this.level=1;
 			this.tresor=0;
+		}
 	}
 
 	// getter setter
@@ -73,6 +76,10 @@ public class Castle extends Sprite {
 
 	public void setTarget(int t) {
 		this.target = t;
+		for (int i=0; i < this.soldiers.size(); i++) {
+			Soldier s = this.soldiers.get(i);
+			s.setTarget(t);
+		}
 	}
 
 	public int getTarget() {
@@ -83,20 +90,49 @@ public class Castle extends Sprite {
 		return this.reserve;
 	}
 
-	public int getProduction() {
-		return this.production.size();
+	public String getSoldiers() {
+		String msg = "";
+		for (int i=0; i < this.soldiers.size(); i++) {
+			msg += this.soldiers.get(i).getType();
+			msg += "|";
+		}
+		return msg;
 	}
+
+	public ProductionTab getProduction() {
+		return this.production;
+	}
+
 	public void addSoldier() {
 		this.reserve ++;
 	}
 
 	// public ArrayList<Soldier> getSoldiers() { return this.soldiers; }
 
-	public void addProd() {
-		if (tresor > 100) {
-			this.production.add(5);
-			tresor -= 100;
+	public void addProd(TypeSoldier t) {
+		boolean add = false;
+		switch (t) {
+			case Piquier:
+				if (this.tresor > 100) {
+					add = true;
+					tresor -= 100;
+				}
+				break;
+			case Chevalier:
+				if (this.tresor > 500) {
+					add = true;
+					tresor -= 500;
+				}
+				break;
+
+			case Onagre:
+				if (this.tresor > 1000) {
+					add = true;
+					tresor -= 100;
+				}
+				break;
 		}
+		this.production.add(t);
 	}
 
 	public void levelup() {
@@ -106,41 +142,34 @@ public class Castle extends Sprite {
 		}
 	}
 
-	public void updateProduction() {
+	public void updateProduction(Pane layer) {
 		if (this.production.size() == 0)
 			return;
-		int prod = this.production.get(0);
-		prod--;
-		if (prod == 0) {
+		ArrayList<TypeSoldier> prod = this.production.getProduction();
+		for (int i=0; i < prod.size(); i++) {
+			Soldier s = new Soldier(this.soldiers.size(), prod.get(i), this.owner, this.target, layer, this.getColor(), this.getX(), this.getY());
+			this.soldiers.add(s);
 			this.reserve++;
-			this.production.remove(0);
 		}
-		else
-			this.production.set(0, prod);
 	}
 
-	public double distance(Castle c) {
-		double tmpX = Math.pow((c.getX() - this.getX()), 2);
-		double tmpY = Math.pow((c.getY() - this.getY()), 2);
-		return Math.sqrt(tmpX + tmpY);
-	}
+	// private Soldier createSoldier(int id, Pane layer) {
+	// 	Soldier s = new Soldier(id, this.owner, this.target, layer, this.getColor(), this.getX(), this.getY());
+	// 	s.addToLayer();
+	// 	// switch pour la position de la door;
+	// 	return s;
+	// }
 
-	private Soldier createSoldier(int id, Pane layer) {
-		Soldier s = new Soldier(id, this.owner, this.target, layer, this.getColor(), this.getX(), this.getY());
-		s.addToLayer();
-		// switch pour la position de la door;
-		return s;
-	}
-
-	public int attack(ArrayList<Soldier> soldiers, Pane layer) {
+	public int attack(ArrayList<Soldier> sdrs) {
 		int i = 3, count = 0;
 		while (i > 0 && this.reserve > 0) {
+			Soldier s = this.soldiers.get(0);
+			sdrs.add(s);
+			this.soldiers.remove(0);
 			this.reserve--;
-			i--;
-			soldiers.add(createSoldier(soldiers.size(), layer));
 			count++;
 		}
-		this.target=-1;
+		// this.target=-1;
 		return count;
 	}
 
@@ -150,17 +179,16 @@ public class Castle extends Sprite {
 		if (this.reserve <= 0) {
 			this.owner = s.getOwner();
 			this.getShape().setFill((owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR));
-			
+
 		}
-		while (this.production.size() > 0)
-			this.production.remove(0);
+		this.production.reset();
 	}
 
 	public void updateGold() {
 		if (owner == 0)
-			tresor = tresor + (level);
+			tresor += level;
 		else
-			tresor = tresor + (10 * level);
+			tresor += (10 * level);
 	}
 
 }

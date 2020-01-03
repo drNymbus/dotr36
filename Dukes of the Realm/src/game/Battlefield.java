@@ -43,7 +43,7 @@ public class Battlefield {
 			else if (i == 1) {
 				c = new Castle(i, -1, layer, x, y, Direction.NORTH);
 			}
-			// neutral castle 
+			// neutral castle
 			else {
 				c = new Castle(i, 0, layer, x, y, Direction.NORTH);
 			}
@@ -58,7 +58,7 @@ public class Battlefield {
 			}
 			if (add) {
 				this.castles.add(c);
-				c.addToLayer();
+				// c.addToLayer();
 				i++;
 			}
 		}
@@ -70,7 +70,7 @@ public class Battlefield {
 	 * this.soldiers = new ArrayList<Soldier>(); // array accessible by id then get
 	 * the list of castle id id; // this.nbSoldiers = 0; this.width = w; this.height
 	 * = h;
-	 * 
+	 *
 	 * Random rnd = new Random(); for (int i=0; i < nb_castles; i++) { int x =
 	 * rnd.nextInt(this.width); int y = rnd.nextInt(this.width); Castle c = new
 	 * Castle(i, 0, layer, x, y, Direction.NORTH); this.castles.add(c); } }
@@ -112,9 +112,9 @@ public class Battlefield {
 		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
 			c.updateGold();
-			c.updateProduction();	
+			c.updateProduction(this.layer);
 			if(c.getTarget()!=-1)
-				c.attack(this.soldiers, this.layer);	
+				c.attack(this.soldiers);
 		}
 		//System.out.println(this.soldiers.size());
 		for (int i = 0; i < this.soldiers.size(); i++) {
@@ -139,6 +139,6 @@ public class Battlefield {
 			pause=true;
 		else if(input.isResume())
 			pause=false;
-		
+
 	}
 }
