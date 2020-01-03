@@ -17,7 +17,6 @@ public class Sprite {
         this.x=x;
         this.y=y;
         this.layer = layer;
-        
     }
 
     public void addToLayer() { this.layer.getChildren().add(rect); }

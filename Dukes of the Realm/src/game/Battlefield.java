@@ -26,7 +26,7 @@ public class Battlefield {
 		this.width = w;
 		this.height = h;
 		this.input = in;
-
+		this.layer=layer;
 		Random rnd = new Random();
 		int i = 0;
 		// while(castles.size()<nb_castles) {
@@ -38,20 +38,14 @@ public class Battlefield {
 			// ally castle
 			if (i == 0) {
 				c = new Castle(i, 1, layer, x, y, Direction.NORTH);
-				c.setTresor(0);
-				c.setLevel(1);
 			}
 			// enemy castle
 			else if (i == 1) {
 				c = new Castle(i, -1, layer, x, y, Direction.NORTH);
-				c.setTresor(0);
-				c.setLevel(1);
 			}
 			// neutral castle 
 			else {
 				c = new Castle(i, 0, layer, x, y, Direction.NORTH);
-				c.setLevel(1+rnd.nextInt(3));
-				c.setTresor(rnd.nextInt(100));
 			}
 			// collision detector
 			for (Castle castle : castles) {
@@ -114,29 +108,26 @@ public class Battlefield {
 		return res;
 	}
 
-	public void attack(int id) {
-		Castle c = this.getCastle(id);
-		int nb_soldiers = c.attack(this.soldiers, this.layer);
-	}
-
 	public void update() {
 		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
-			c.update();
-		//	this.attack(c.getId());
+			c.updateGold();
+			c.updateProduction();	
+			if(c.getTarget()!=-1)
+				c.attack(this.soldiers, this.layer);	
 		}
-
-	/*	for (int i = 0; i < this.soldiers.size(); i++) {
+		//System.out.println(this.soldiers.size());
+		for (int i = 0; i < this.soldiers.size(); i++) {
 			Soldier s = this.soldiers.get(i);
 			Castle c = this.getCastle(s.getTarget());
 			s.update(c.getX(), c.getY());
-
 			if (c.isIn(s)) {
+				if(c.getOwner()==s.getOwner())
+					c.addSoldier();
 				c.defend(s);
 				this.soldiers.remove(i);
 			}
-
-		}*/
+		}
 	}
 
 	public void processInput(Input input, long now) {
