@@ -12,9 +12,10 @@ public class Soldier extends Sprite {
 
     public Soldier(int id, int owner, int target, Pane layer, Color c, int x, int y) {
         // Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
-        super(layer, c, x, y, 1);
-        this.id = id;
-
+    	super(layer,
+				(owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR),
+				x, y, 4);
+		this.id = id;
         this.owner = owner;
         this.target = target;
     }
@@ -29,8 +30,10 @@ public class Soldier extends Sprite {
             dx = (this.getX() - target_x > 0) ? -1 : 1;
 
         if (this.getY() != target_y)
-            dx = (this.getY() - target_y > 0) ? -1 : 1;
-
+            dy = (this.getY() - target_y > 0) ? -1 : 1;
+        
+        System.out.println(dx);
+        System.out.println(dy);
         this.setX(this.getX() + dx);
         this.setY(this.getY() + dy);
     }

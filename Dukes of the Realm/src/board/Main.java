@@ -53,11 +53,12 @@ public class Main extends Application {
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				if (now % 5 == 0) { // slowing down the turn
+				if (now % 2 == 0) { // slowing down the turn
 					if (!bf.pause) {
 						bf.processInput(input, now);
 						bf.update();
 						update_display();
+						updatefqd();
 					} else
 						bf.processInput(input, now);
 				}
@@ -99,12 +100,43 @@ public class Main extends Application {
 		if (currentcastle == null)
 			return;
 		else {
+			switch (currentcastle.getOwner()) {
+			case -1:
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy");
+				break;
+			case 1:
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally");
+				break;
+			default:
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral");
+
+				break;
+			}
 			((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + currentcastle.getLevel());
 			((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + currentcastle.getTresor());
 			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + currentcastle.getNbSoldiers());
 
 		}
 
+	}
+
+	public void updatefqd() {
+		for (int i = 0; i < 5; i++) {
+			Castle a = bf.getCastles().get(i);
+			if (a.getOwner() == 1) {
+				a.getShape().setOnContextMenuRequested(e -> {
+					ContextMenu contextMenu = new ContextMenu();
+					MenuItem produce = new MenuItem("Produce");
+					MenuItem levelUp = new MenuItem("level up");
+					MenuItem attack = new MenuItem("Attack");
+					produce.setOnAction(evt -> a.addProd());
+					levelUp.setOnAction(evt -> a.levelup());
+					attack.setOnAction(evt -> a.setTarget(1));
+					contextMenu.getItems().addAll(produce, levelUp, attack);
+					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
+				});
+			}
+		}
 	}
 
 	public void loadGame() {
@@ -144,7 +176,6 @@ public class Main extends Application {
 
 					break;
 				}
-
 				((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + a.getLevel());
 				((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + a.getTresor());
 				((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + a.getNbSoldiers());
@@ -155,9 +186,12 @@ public class Main extends Application {
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
 					MenuItem produce = new MenuItem("Produce");
+					MenuItem levelUp = new MenuItem("level up");
 					MenuItem attack = new MenuItem("Attack");
 					produce.setOnAction(evt -> a.addProd());
-					contextMenu.getItems().addAll(produce, attack);
+					levelUp.setOnAction(evt -> a.levelup());
+					attack.setOnAction(evt -> a.setTarget(1));
+					contextMenu.getItems().addAll(produce, levelUp, attack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			}
