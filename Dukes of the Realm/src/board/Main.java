@@ -47,6 +47,10 @@ public class Main extends Application {
 		playfieldLayer = new Pane();
 		root.getChildren().add(playfieldLayer);
 		loadGame();
+	}
+
+	public void loadGame() {
+		Battlefield bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
