@@ -1,6 +1,7 @@
 package game;
 
 import javafx.scene.shape.Rectangle;
+import board.Settings;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -14,8 +15,8 @@ public class Sprite {
         this.rect = new Rectangle(x, y, size, size);
         this.rect.setFill(c);
         this.color = c;
-        this.x=x;
-        this.y=y;
+        this.x=(int)rect.getX()+(Settings.CASTLE_SIZE/2);
+        this.y=(int)rect.getY()+(Settings.CASTLE_SIZE/2);
         this.layer = layer;
         this.addToLayer();
     }
@@ -36,8 +37,8 @@ public class Sprite {
 
     public boolean isIn(Sprite s) {
         int x = s.getX(), y = s.getY();
-        if (x >= this.x && x <= this.x + this.getSize()) {
-            if (y >= this.y && y <= this.y + this.getSize()) return true;
+        if (x >= rect.getX() && x <= this.x + this.getSize()) {
+            if (y >= rect.getY() && y <= this.y + this.getSize()) return true;
         }
         return false;
     }

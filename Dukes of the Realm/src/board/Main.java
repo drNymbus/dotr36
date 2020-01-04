@@ -2,6 +2,7 @@ package board;
 
 import game.Battlefield;
 import game.Castle;
+import game.EnnemyIA;
 import game.TypeSoldier;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
@@ -33,10 +34,12 @@ public class Main extends Application {
 	private Scene scene;
 	private AnimationTimer gameLoop;
 	private Battlefield bf;
+	private EnnemyIA ennemy;
 	private Input input;
 	private Castle currentcastle = null;
 	private ArrayList<HBox> text = new ArrayList<>();
 	private boolean attack = false;
+	private int ennemymove;
 	Group root;
 
 	@Override
@@ -60,8 +63,11 @@ public class Main extends Application {
 							bf.update();
 							// update_display();
 							update_CastlState();
-							if (currentcastle != null)
-								System.out.println(currentcastle.getId());
+							if (ennemymove == 10) {
+								ennemy.update_Ennemy();
+								ennemymove = 0;
+							}
+							ennemymove++;
 						} else
 							bf.processInput(input, now);
 					}
@@ -173,7 +179,9 @@ public class Main extends Application {
 		displayInfo();
 		// creating battlefield
 		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, 650, 800);
-		// ally castle will always be 0 when loading
+		ennemy = new EnnemyIA(bf);
+		ennemymove = 0;
+		// middle click deselecting the current castle
 		playfieldLayer.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) {
 				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n");
@@ -185,6 +193,8 @@ public class Main extends Application {
 				e.consume();
 			}
 		});
+
+		// right click selecting a castle and getting information
 		for (int i = 0; i < Settings.NB_CASTLES; i++) {
 			Castle a = bf.getCastles().get(i);
 			a.getShape().setOnMouseClicked(e -> {
@@ -212,6 +222,7 @@ public class Main extends Application {
 					e.consume();
 				}
 			});
+			// left click to make order
 			if (a.getOwner() == 1) {
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
