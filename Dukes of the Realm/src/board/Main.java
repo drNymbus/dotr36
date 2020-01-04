@@ -2,6 +2,7 @@ package board;
 
 import game.Battlefield;
 import game.Castle;
+import game.TypeSoldier;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class Main extends Application {
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				if (now % 2 == 0) { // slowing down the turn
+				if (now % 5 == 0) { // slowing down the turn
 					if (!bf.pause) {
 						bf.processInput(input, now);
 						bf.update();
@@ -75,22 +76,28 @@ public class Main extends Application {
 		text.add(infoOwner);
 		infoOwner.relocate(670, 50);
 
+		HBox infoTarget = new HBox();
+		Text textTarget = new Text("Target:");
+		infoTarget.getChildren().add(textTarget);
+		text.add(infoTarget);
+		infoTarget.relocate(670, 100);
+
 		HBox infoLevel = new HBox();
 		Text textLevel = new Text("Niveau du chateau:");
 		infoLevel.getChildren().add(textLevel);
-		infoLevel.relocate(670, 100);
+		infoLevel.relocate(670, 150);
 		text.add(infoLevel);
 
 		HBox infoTresor = new HBox();
 		Text textTresor = new Text("Trésor:");
 		infoTresor.getChildren().add(textTresor);
-		infoTresor.relocate(670, 150);
+		infoTresor.relocate(670, 200);
 		text.add(infoTresor);
 
 		HBox infoSoldat = new HBox();
-		Text textSoldat = new Text("Soldat:");
+		Text textSoldat = new Text("Soldats:");
 		infoSoldat.getChildren().add(textSoldat);
-		infoSoldat.relocate(670, 200);
+		infoSoldat.relocate(670, 250);
 		text.add(infoSoldat);
 		root.getChildren().addAll(text);
 
@@ -102,37 +109,41 @@ public class Main extends Application {
 		else {
 			switch (currentcastle.getOwner()) {
 			case -1:
-				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy");
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy(" + currentcastle.getId() + ")");
 				break;
 			case 1:
-				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally");
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally(" + currentcastle.getId() + ")");
 				break;
 			default:
-				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral");
-
+				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral(" + currentcastle.getId() + ")");
 				break;
 			}
-			((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + currentcastle.getLevel());
-			((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + currentcastle.getTresor());
-			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + currentcastle.getNbSoldiers());
+			((Text) text.get(1).getChildren().get(0)).setText("Target:\n" + currentcastle.getTarget());
+			((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n" + currentcastle.getLevel());
+			((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n" + currentcastle.getTresor());
+			((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n" + currentcastle.getSoldiers());
 
 		}
 
 	}
 
 	public void updatefqd() {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < Settings.NB_CASTLES; i++) {
 			Castle a = bf.getCastles().get(i);
 			if (a.getOwner() == 1) {
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
-					MenuItem produce = new MenuItem("Produce");
+					MenuItem produce_piquier = new MenuItem("Produce (Piquier)");
+					MenuItem produce_chevalier = new MenuItem("Produce (Chevalier)");
+					MenuItem produce_onagre = new MenuItem("Produce (Onagre)");
 					MenuItem levelUp = new MenuItem("level up");
 					MenuItem attack = new MenuItem("Attack");
-					produce.setOnAction(evt -> a.addProd());
+					produce_piquier.setOnAction(evt -> a.addProd(TypeSoldier.Piquier));
+					produce_chevalier.setOnAction(evt -> a.addProd(TypeSoldier.Chevalier));
+					produce_onagre.setOnAction(evt -> a.addProd(TypeSoldier.Onagre));
 					levelUp.setOnAction(evt -> a.levelup());
 					attack.setOnAction(evt -> a.setTarget(1));
-					contextMenu.getItems().addAll(produce, levelUp, attack);
+					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp, attack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			}
@@ -152,46 +163,49 @@ public class Main extends Application {
 		// ally castle will always be 0 when loading
 		playfieldLayer.setOnMousePressed(e -> {
 			((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n");
-			((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n");
-			((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n");
-			((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n");
+			((Text) text.get(1).getChildren().get(0)).setText("Target:\n");
+			((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n");
+			((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n");
+			((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n");
 			currentcastle = null;
 			e.consume();
 		});
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < Settings.NB_CASTLES; i++) {
 			Castle a = bf.getCastles().get(i);
 
 			a.getShape().setOnMouseClicked(e -> {
-				// if(e.getButton()==MouseButton.SECONDARY)return;
-				currentcastle = a;
 				switch (a.getOwner()) {
-				case -1:
-					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy");
-					break;
-				case 1:
-					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally");
-					break;
-				default:
-					((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral");
-
-					break;
+					case -1:
+						((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ennemy(" + a.getId() + ")");
+						break;
+					case 1:
+						((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Ally(" + a.getId() + ")");
+						break;
+					default:
+						((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n" + "Neutral(" + a.getId() + ")");
+						break;
 				}
-				((Text) text.get(1).getChildren().get(0)).setText("Niveau du chateau:\n" + a.getLevel());
-				((Text) text.get(2).getChildren().get(0)).setText("Trésor:\n" + a.getTresor());
-				((Text) text.get(3).getChildren().get(0)).setText("Soldat:\n" + a.getNbSoldiers());
+				((Text) text.get(1).getChildren().get(0)).setText("Target:\n" + a.getTarget());
+				((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n" + a.getLevel());
+				((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n" + a.getTresor());
+				((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n" + a.getSoldiers());
 				e.consume();
 
 			});
 			if (a.getOwner() == 1) {
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
-					MenuItem produce = new MenuItem("Produce");
+					MenuItem produce_piquier = new MenuItem("Produce (Piquier)");
+					MenuItem produce_chevalier = new MenuItem("Produce (Chevalier)");
+					MenuItem produce_onagre = new MenuItem("Produce (Onagre)");
 					MenuItem levelUp = new MenuItem("level up");
 					MenuItem attack = new MenuItem("Attack");
-					produce.setOnAction(evt -> a.addProd());
+					produce_piquier.setOnAction(evt -> a.addProd(TypeSoldier.Piquier));
+					produce_chevalier.setOnAction(evt -> a.addProd(TypeSoldier.Chevalier));
+					produce_onagre.setOnAction(evt -> a.addProd(TypeSoldier.Onagre));
 					levelUp.setOnAction(evt -> a.levelup());
 					attack.setOnAction(evt -> a.setTarget(1));
-					contextMenu.getItems().addAll(produce, levelUp, attack);
+					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp, attack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			}

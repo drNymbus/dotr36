@@ -93,8 +93,7 @@ public class Castle extends Sprite {
 	public String getSoldiers() {
 		String msg = "";
 		for (int i=0; i < this.soldiers.size(); i++) {
-			msg += this.soldiers.get(i).getType();
-			msg += "|";
+			msg += " - " + this.soldiers.get(i).getType() + "\n";
 		}
 		return msg;
 	}
@@ -143,6 +142,23 @@ public class Castle extends Sprite {
 	}
 
 	public void updateProduction(Pane layer) {
+		int x = this.getX() + Settings.SIZE_CASTLE / 2;
+		int y = this.getY() + Settings.SIZE_CASTLE / 2;
+		switch (this.door) {
+			case NORTH:
+				y -= Settings.SIZE_SOLDIER / 2;
+				break;
+			case EAST:
+				x += Settings.SIZE_CASTLE / 2;
+				break;
+			case SOUTH:
+				y += Settings.SIZE_SOLDIER / 2;
+				break;
+			case WEST:
+				x -= Settings.SIZE_CASTLE / 2;
+				break;
+		}
+
 		if (this.production.size() == 0)
 			return;
 		ArrayList<TypeSoldier> prod = this.production.getProduction();

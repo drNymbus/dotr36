@@ -48,4 +48,10 @@ public class Sprite {
 		return Math.sqrt(tmpX + tmpY);
 	}
 
+    public double distance(int x, int y) {
+		double tmpX = Math.pow((x - this.getX()), 2);
+		double tmpY = Math.pow((y - this.getY()), 2);
+		return Math.sqrt(tmpX + tmpY);
+	}
+
 }

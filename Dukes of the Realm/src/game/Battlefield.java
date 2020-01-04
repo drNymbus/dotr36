@@ -12,10 +12,13 @@ import javafx.scene.layout.Pane;
 
 public class Battlefield {
 	private int width, height;
+
 	private ArrayList<Castle> castles;
 	private int nbCastles;
+
 	private ArrayList<Soldier> soldiers;
 	private int nbSoldiers;
+
 	public boolean pause=false;
 	private Pane layer;
 	private Input input;
@@ -23,58 +26,45 @@ public class Battlefield {
 	public Battlefield(int nb_castles, Pane layer, Input in, int w, int h) {
 		this.castles = new ArrayList<Castle>();
 		this.soldiers = new ArrayList<Soldier>();
+
 		this.width = w;
 		this.height = h;
+
 		this.input = in;
 		this.layer=layer;
+
 		Random rnd = new Random();
 		int i = 0;
-		// while(castles.size()<nb_castles) {
 		while (i < nb_castles) {
+			int owner = (i == 0) ? Settings.ALLY_ID : ((i == 1) ? Settings.ENNEMY_ID : Settings.NEUTRAL_ID);
+
 			int x = rnd.nextInt(this.width - Settings.CASTLE_SIZE);
 			int y = rnd.nextInt(this.height - Settings.CASTLE_SIZE);
-			Castle c;
-			boolean add = true;
-			// ally castle
-			if (i == 0) {
-				c = new Castle(i, 1, layer, x, y, Direction.NORTH);
+
+			Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+			Direction d = dirs[rnd.nextInt(4)];
+
+			boolean pos_ok = false;
+			while (i > 0 && !pos_ok) {
+				x = rnd.nextInt(this.width - Settings.CASTLE_SIZE);
+				y = rnd.nextInt(this.height - Settings.CASTLE_SIZE);
+
+				if (i == 1) {
+					if (this.castles.get(0).distance(x,y) < 500)
+						pos_ok = true;
+				} else {
+					for (Castle c : this.castles) {
+						if (c.distance(x,y) < 100) pos_ok = true;
+					}
+				}
+
 			}
-			// enemy castle
-			else if (i == 1) {
-				c = new Castle(i, -1, layer, x, y, Direction.NORTH);
-			}
-			// neutral castle
-			else {
-				c = new Castle(i, 0, layer, x, y, Direction.NORTH);
-			}
-			// collision detector
-			for (Castle castle : castles) {
-				if (castle.distance(c) < 100)
-					add = false;
-			}
-			if (i == 1) {
-				if (c.distance(castles.get(0)) < 500)
-					add = false;
-			}
-			if (add) {
-				this.castles.add(c);
-				// c.addToLayer();
-				i++;
-			}
+
+			Castle c = new Castle(i, owner, this.layer, x, y, d);
+			this.castles.add(c);
+			i++;
 		}
 	}
-
-	/*
-	 * public Battlefield(int nb_castles, Pane layer, Input in, int w, int h) {
-	 * this.castles = new ArrayList<Castle>(); this.nbCastles = nb_castles;
-	 * this.soldiers = new ArrayList<Soldier>(); // array accessible by id then get
-	 * the list of castle id id; // this.nbSoldiers = 0; this.width = w; this.height
-	 * = h;
-	 *
-	 * Random rnd = new Random(); for (int i=0; i < nb_castles; i++) { int x =
-	 * rnd.nextInt(this.width); int y = rnd.nextInt(this.width); Castle c = new
-	 * Castle(i, 0, layer, x, y, Direction.NORTH); this.castles.add(c); } }
-	 */
 
 	public Castle getCastle(int id) {
 		for (int i = 0; i < this.castles.size(); i++) {
