@@ -54,7 +54,7 @@ public class Battlefield {
 						pos_ok = true;
 				} else {
 					for (Castle c : this.castles) {
-						if (c.distance(x,y) < 100) pos_ok = true;
+						if (c.distance(x,y) > 100) pos_ok = true;
 					}
 				}
 
