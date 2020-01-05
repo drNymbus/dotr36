@@ -7,14 +7,14 @@ import java.util.Random;
 
 public class ProductionTab {
     private ArrayList<Integer> time;
-    private ArrayList<TypeSoldier> type;
+    private ArrayList<Production> type;
 
     public ProductionTab() {
         this.time = new ArrayList<Integer>();
-        this.type = new ArrayList<TypeSoldier>();
+        this.type = new ArrayList<Production>();
     }
 
-    public void add(TypeSoldier t) {
+    public void add(Production t) {
         switch (t) {
             case Piquier:
                 this.time.add(5);
@@ -31,29 +31,21 @@ public class ProductionTab {
 
     public void add(int time) {
         this.time.add(time);
-        this.type.add(TypeSoldier.None);
+        this.type.add(Production.Level);
     }
 
 
-    public ArrayList<TypeSoldier> getProduction() {
-        ArrayList<TypeSoldier> res = new ArrayList<TypeSoldier>();
-        ArrayList<Integer> rm = new ArrayList<Integer>();
-        for (int i=0; i < this.time.size(); i++) {
-            int time = this.time.get(i);
-            if (time == 0) {
-                res.add(this.type.get(i));
-                rm.add(i);
-            }
+    public Production getProduction() {
+        Production res = Production.None;
+        int time = this.time.get(0);
+        if (time == 0) {
+            res = this.type.get(0);
+            this.time.remove(0);
+            this.type.remove(0);
+        } else {
             time--;
-            this.time.set(i, time);
+            this.time.set(0, time);
         }
-
-        for (int i=0; i < rm.size(); i++) {
-            int i_rm = rm.get(i);
-            this.time.remove(i_rm);
-            this.type.remove(i_rm);
-        }
-
         return res;
     }
 
@@ -61,7 +53,7 @@ public class ProductionTab {
         return this.time.size();
     }
 
-    public TypeSoldier get(int index) {
+    public Production get(int index) {
         return this.type.get(index);
     }
 

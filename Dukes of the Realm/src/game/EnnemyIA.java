@@ -26,13 +26,13 @@ public class EnnemyIA {
 		int nb = rand.nextInt(c.size());
 		int move = rand.nextInt(101);
 		if (move < 30) {
-			c.get(nb).addProd(TypeSoldier.Piquier);
+			c.get(nb).addProd(Production.Piquier);
 			System.out.println("piquier");
 		} else if (move > 29 && move < 60) {
-			c.get(nb).addProd(TypeSoldier.Chevalier);
+			c.get(nb).addProd(Production.Chevalier);
 			System.out.println("chevalier");
 		} else if (move > 59 && move < 90) {
-			c.get(nb).addProd(TypeSoldier.Onagre);
+			c.get(nb).addProd(Production.Onagre);
 			System.out.println("onagre");
 		} else if (move > 89) {
 			c.get(nb).setTarget(ce.get(rand.nextInt(ce.size())).getId());

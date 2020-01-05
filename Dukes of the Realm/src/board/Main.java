@@ -3,7 +3,7 @@ package board;
 import game.Battlefield;
 import game.Castle;
 import game.EnnemyIA;
-import game.TypeSoldier;
+import game.Production;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu ;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -123,20 +124,32 @@ public class Main extends Application {
 					MenuItem produce_piquier = new MenuItem("Produce (Piquier)");
 					MenuItem produce_chevalier = new MenuItem("Produce (Chevalier)");
 					MenuItem produce_onagre = new MenuItem("Produce (Onagre)");
-					MenuItem levelUp = new MenuItem("level up");
-					produce_piquier.setOnAction(evt -> a.addProd(TypeSoldier.Piquier));
-					produce_chevalier.setOnAction(evt -> a.addProd(TypeSoldier.Chevalier));
-					produce_onagre.setOnAction(evt -> a.addProd(TypeSoldier.Onagre));
+					MenuItem levelUp = new MenuItem("LVL UP(" + (a.getLevel() + 1) + "," + (1000*a.getLevel()) + "G)");
+					MenuItem stopAttack = new MenuItem("Stop Attack");
+					produce_piquier.setOnAction(evt -> a.addProd(Production.Piquier));
+					produce_chevalier.setOnAction(evt -> a.addProd(Production.Chevalier));
+					produce_onagre.setOnAction(evt -> a.addProd(Production.Onagre));
 					levelUp.setOnAction(evt -> a.levelup());
-					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp);
+					stopAttack.setOnAction(evt -> a.stopAttack());
+					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp, stopAttack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			} else if (currentcastle != null && currentcastle.getOwner() == 1) {
 
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
-					MenuItem setAttack = new MenuItem("attack");
-					setAttack.setOnAction(evt -> currentcastle.setTarget(a.getId()));
+					Menu setAttack = new Menu("Attack");
+					MenuItem atk1 = new MenuItem("1");
+					MenuItem atk2 = new MenuItem("2");
+					MenuItem atk3 = new MenuItem("3");
+					MenuItem atk4 = new MenuItem("4");
+					MenuItem atk5 = new MenuItem("5");
+					atk1.setOnAction(evt -> currentcastle.attack(a.getId(), bf.getSoldiers(), 1));
+					atk2.setOnAction(evt -> currentcastle.attack(a.getId(), bf.getSoldiers(), 2));
+					atk3.setOnAction(evt -> currentcastle.attack(a.getId(), bf.getSoldiers(), 3));
+					atk4.setOnAction(evt -> currentcastle.attack(a.getId(), bf.getSoldiers(), 4));
+					atk5.setOnAction(evt -> currentcastle.attack(a.getId(), bf.getSoldiers(), 5));
+					setAttack.getItems().addAll(atk1, atk2, atk3, atk4, atk5);
 					contextMenu.getItems().addAll(setAttack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
@@ -155,7 +168,7 @@ public class Main extends Application {
 		input.addListeners();
 		displayInfo();
 		// creating battlefield
-		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, 650, 800);
+		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, Settings.GAME_WIDTH, Settings.GAME_HEIGHT);
 		ennemy = new EnnemyIA(bf);
 		ennemymove = 0;
 
@@ -190,12 +203,14 @@ public class Main extends Application {
 					MenuItem produce_piquier = new MenuItem("Produce (Piquier)");
 					MenuItem produce_chevalier = new MenuItem("Produce (Chevalier)");
 					MenuItem produce_onagre = new MenuItem("Produce (Onagre)");
-					MenuItem levelUp = new MenuItem("level up");
-					produce_piquier.setOnAction(evt -> a.addProd(TypeSoldier.Piquier));
-					produce_chevalier.setOnAction(evt -> a.addProd(TypeSoldier.Chevalier));
-					produce_onagre.setOnAction(evt -> a.addProd(TypeSoldier.Onagre));
+					MenuItem levelUp = new MenuItem("LVL UP(" + (a.getLevel() + 1) + "," + (1000*a.getLevel()) + "G)");
+					MenuItem stopAttack = new MenuItem("Stop Attack");
+					produce_piquier.setOnAction(evt -> a.addProd(Production.Piquier));
+					produce_chevalier.setOnAction(evt -> a.addProd(Production.Chevalier));
+					produce_onagre.setOnAction(evt -> a.addProd(Production.Onagre));
 					levelUp.setOnAction(evt -> a.levelup());
-					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp);
+					stopAttack.setOnAction(evt -> a.stopAttack());
+					contextMenu.getItems().addAll(produce_piquier, produce_chevalier, produce_onagre, levelUp, stopAttack);
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			}
