@@ -3,6 +3,8 @@ package game;
 import java.util.ArrayList;
 import java.util.Random;
 
+import board.Settings;
+
 public class EnnemyIA {
 
 	Battlefield bf;
@@ -16,7 +18,7 @@ public class EnnemyIA {
 		ArrayList<Castle> ce = new ArrayList<Castle>();
 
 		for (Castle castle : bf.getCastles()) {
-			if (castle.getOwner() == -1) {
+			if (castle.getOwner() == Settings.ENNEMY_ID) {
 				c.add(castle);
 			} else
 				ce.add(castle);

@@ -10,20 +10,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import javafx.scene.shape.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class Main extends Application {
@@ -37,9 +44,11 @@ public class Main extends Application {
 	private EnnemyIA ennemy;
 	private Input input;
 	private Castle currentcastle = null;
-	private ArrayList<HBox> text = new ArrayList<>();
+	private ArrayList<Text> text = new ArrayList<>();
+	private VBox tmp;
 	private boolean attack = false;
-	private int ennemymove;
+	private int ennemymove; //check when the AI plays
+	private HBox endMsg;
 	Group root;
 
 	@Override
@@ -50,20 +59,21 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
+		primaryStage.setTitle("Dukes Of The realm");
 		playfieldLayer = new Pane();
 		root.getChildren().add(playfieldLayer);
 		loadGame();
 		gameLoop = new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				if (!attack) {
+				if (bf.gameover == 0) {
 					if (now % 5 == 0) { // slowing down the turn
+						update_CastlState();
 						if (!bf.pause) {
 							bf.processInput(input, now);
 							bf.update();
-							// update_display();
-							update_CastlState();
-							if (ennemymove == 10) {
+							update_Display();
+							if (ennemymove == 50) {
 								ennemy.update_Ennemy();
 								ennemymove = 0;
 							}
@@ -71,6 +81,8 @@ public class Main extends Application {
 						} else
 							bf.processInput(input, now);
 					}
+				} else {
+					createEndMessage(bf.gameover);
 				}
 			}
 		};
@@ -78,65 +90,28 @@ public class Main extends Application {
 	};
 
 	public void displayInfo() {
-
-		HBox infoOwner = new HBox();
-		Text textOwner = new Text("Propriétaire:");
-		infoOwner.getChildren().add(textOwner);
-		text.add(infoOwner);
-		infoOwner.relocate(670, 50);
-
-		HBox infoTarget = new HBox();
-		Text textTarget = new Text("Target:");
-		infoTarget.getChildren().add(textTarget);
-		text.add(infoTarget);
-		infoTarget.relocate(670, 100);
-
-		HBox infoLevel = new HBox();
-		Text textLevel = new Text("Niveau du chateau:");
-		infoLevel.getChildren().add(textLevel);
-		infoLevel.relocate(670, 150);
-		text.add(infoLevel);
-
-		HBox infoTresor = new HBox();
-		Text textTresor = new Text("Trésor:");
-		infoTresor.getChildren().add(textTresor);
-		infoTresor.relocate(670, 200);
-		text.add(infoTresor);
-
-		HBox infoSoldat = new HBox();
-		Text textSoldat = new Text("Soldats:");
-		infoSoldat.getChildren().add(textSoldat);
-		infoSoldat.relocate(670, 250);
-		text.add(infoSoldat);
-		root.getChildren().addAll(text);
-
+		tmp = new VBox();
+		tmp.setSpacing(10);
+		Text textOwner = new Text("Propriétaire:\n");
+		text.add(textOwner);
+		Text textTarget = new Text("Target:\n");
+		text.add(textTarget);
+		Text textLevel = new Text("Niveau du chateau\n");
+		text.add(textLevel);
+		Text textTresor = new Text("Trésor:\n");
+		text.add(textTresor);
+		Text textSoldat = new Text("Soldats:\n");
+		text.add(textSoldat);
+		tmp.getChildren().addAll(textOwner, textTarget, textLevel, textTresor, textSoldat);
+		tmp.relocate(670, 50);
+		root.getChildren().add(tmp);
 	}
 
 	public void update_Display() {
 		if (currentcastle == null)
 			return;
-		else {
-			switch (currentcastle.getOwner()) {
-			case -1:
-				((Text) text.get(0).getChildren().get(0))
-						.setText("Propriétaire:\n" + "Ennemy(" + currentcastle.getId() + ")");
-				break;
-			case 1:
-				((Text) text.get(0).getChildren().get(0))
-						.setText("Propriétaire:\n" + "Ally(" + currentcastle.getId() + ")");
-				break;
-			default:
-				((Text) text.get(0).getChildren().get(0))
-						.setText("Propriétaire:\n" + "Neutral(" + currentcastle.getId() + ")");
-				break;
-			}
-			((Text) text.get(1).getChildren().get(0)).setText("Target:\n" + currentcastle.getTarget());
-			((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n" + currentcastle.getLevel());
-			((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n" + currentcastle.getTresor());
-			((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n" + currentcastle.getSoldiers());
-
-		}
-
+		else
+			display_switch(currentcastle.getOwner());
 	}
 
 	public void update_CastlState() {
@@ -157,6 +132,7 @@ public class Main extends Application {
 					contextMenu.show(a.getShape(), e.getScreenX(), e.getScreenY());
 				});
 			} else if (currentcastle != null && currentcastle.getOwner() == 1) {
+
 				a.getShape().setOnContextMenuRequested(e -> {
 					ContextMenu contextMenu = new ContextMenu();
 					MenuItem setAttack = new MenuItem("attack");
@@ -167,6 +143,7 @@ public class Main extends Application {
 			}
 
 		}
+
 	}
 
 	public void loadGame() {
@@ -181,14 +158,15 @@ public class Main extends Application {
 		bf = new Battlefield(Settings.NB_CASTLES, playfieldLayer, input, 650, 800);
 		ennemy = new EnnemyIA(bf);
 		ennemymove = 0;
+
 		// middle click deselecting the current castle
 		playfieldLayer.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.MIDDLE) {
-				((Text) text.get(0).getChildren().get(0)).setText("Propriétaire:\n");
-				((Text) text.get(1).getChildren().get(0)).setText("Target:\n");
-				((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n");
-				((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n");
-				((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n");
+				text.get(0).setText("Propriétaire:\n");
+				text.get(1).setText("Target:\n");
+				text.get(2).setText("Niveau du chateau:\n");
+				text.get(3).setText("Trésor:\n");
+				text.get(4).setText("Soldats:\n");
 				currentcastle = null;
 				e.consume();
 			}
@@ -201,24 +179,7 @@ public class Main extends Application {
 				if (e.getButton() == MouseButton.PRIMARY) {
 
 					currentcastle = a;
-					switch (a.getOwner()) {
-					case -1:
-						((Text) text.get(0).getChildren().get(0))
-								.setText("Propriétaire:\n" + "Ennemy(" + a.getId() + ")");
-						break;
-					case 1:
-						((Text) text.get(0).getChildren().get(0))
-								.setText("Propriétaire:\n" + "Ally(" + a.getId() + ")");
-						break;
-					default:
-						((Text) text.get(0).getChildren().get(0))
-								.setText("Propriétaire:\n" + "Neutral(" + a.getId() + ")");
-						break;
-					}
-					((Text) text.get(1).getChildren().get(0)).setText("Target:\n" + a.getTarget());
-					((Text) text.get(2).getChildren().get(0)).setText("Niveau du chateau:\n" + a.getLevel());
-					((Text) text.get(3).getChildren().get(0)).setText("Trésor:\n" + a.getTresor());
-					((Text) text.get(4).getChildren().get(0)).setText("Soldats:\n" + a.getSoldiers());
+					display_switch(a.getOwner());
 					e.consume();
 				}
 			});
@@ -239,6 +200,45 @@ public class Main extends Application {
 				});
 			}
 		}
+	}
+
+	//
+	public void display_switch(int i) {
+		switch (i) {
+		case -1:
+			text.get(0).setText("Propriétaire:\n" + "Ennemy(" + currentcastle.getId() + ")");
+			break;
+		case 1:
+			text.get(0).setText("Propriétaire:\n" + "Ally(" + currentcastle.getId() + ")");
+			break;
+		default:
+			text.get(0).setText("Propriétaire:\n" + "Neutral(" + currentcastle.getId() + ")");
+			break;
+		}
+		text.get(1).setText("Target:\n" + currentcastle.getTarget());
+		text.get(2).setText("Niveau du chateau:\n" + currentcastle.getLevel());
+		text.get(3).setText("Trésor:\n" + currentcastle.getTresor());
+		text.get(4).setText("Soldats:\n" + currentcastle.getSoldiers());
+	}
+
+	public void createEndMessage(int winner) {
+		if (winner == Settings.ALLY_ID) {
+			endMsg = new HBox();
+			Text msgWin = new Text("Victoire !");
+			msgWin.setStyle("-fx-font-size:100px;");
+			endMsg.getChildren().add(msgWin);
+			endMsg.relocate(Settings.SCENE_WIDTH / 2, Settings.SCENE_HEIGHT / 2);
+			endMsg.relocate((Settings.SCENE_WIDTH / 2) - 200, Settings.SCENE_HEIGHT / 2);
+			root.getChildren().add(endMsg);
+		} else {
+			endMsg = new HBox();
+			Text msgWin = new Text("Défaite");
+			msgWin.setStyle("-fx-font-size:100px;");
+			endMsg.getChildren().add(msgWin);
+			endMsg.relocate((Settings.SCENE_WIDTH / 2) - 200, Settings.SCENE_HEIGHT / 2);
+			root.getChildren().add(endMsg);
+		}
+
 	}
 
 	public static void main(String[] args) {

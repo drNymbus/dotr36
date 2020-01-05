@@ -22,7 +22,7 @@ public class Battlefield {
 	public boolean pause=false;
 	private Pane layer;
 	private Input input;
-
+	public int gameover=0;
 	public Battlefield(int nb_castles, Pane layer, Input in, int w, int h) {
 		this.castles = new ArrayList<Castle>();
 		this.soldiers = new ArrayList<Soldier>();
@@ -99,13 +99,30 @@ public class Battlefield {
 	}
 
 	public void update() {
+		int allycount=0;
+		int enemycount=0;
 		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
+			switch (c.getOwner()) {
+			case Settings.ALLY_ID:
+				allycount++;
+				break;
+			case Settings.ENNEMY_ID:
+				enemycount++;
+			default:
+				break;
+			}
+			
 			c.updateGold();
 			c.updateProduction(this.layer);
 			if(c.getTarget()!=-1)
 				c.attack(this.soldiers);
 		}
+		if(allycount==0)
+			gameover=Settings.ENNEMY_ID;
+		if(enemycount==0)
+			gameover=Settings.ALLY_ID;
+		
 		//System.out.println(this.soldiers.size());
 		for (int i = 0; i < this.soldiers.size(); i++) {
 			Soldier s = this.soldiers.get(i);
