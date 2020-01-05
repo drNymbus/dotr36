@@ -1,12 +1,14 @@
 package game;
 
-import game.*;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 import board.Input;
 import board.Settings;
+import game.item.Castle;
+import game.item.Soldier;
+import game.item.Sprite;
+import game.util.Direction;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 

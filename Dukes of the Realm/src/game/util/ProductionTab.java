@@ -1,9 +1,8 @@
-package game;
+package game.util;
 
-import board.*;
+import game.util.Production;
 // import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ProductionTab {
     private ArrayList<Integer> time;

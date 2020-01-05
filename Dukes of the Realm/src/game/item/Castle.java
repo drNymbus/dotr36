@@ -1,6 +1,9 @@
-package game;
+package game.item;
 
 import board.*;
+import game.util.Direction;
+import game.util.Production;
+import game.util.ProductionTab;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;

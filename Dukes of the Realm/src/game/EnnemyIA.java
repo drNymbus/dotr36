@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import board.Settings;
+import game.item.Castle;
+import game.util.Production;
 
 public class EnnemyIA {
 

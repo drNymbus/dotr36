@@ -1,33 +1,21 @@
 package board;
 
 import game.Battlefield;
-import game.Castle;
+import game.item.Castle;
 import game.EnnemyIA;
-import game.Production;
+import game.util.Production;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import javafx.scene.shape.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu ;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;

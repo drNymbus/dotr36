@@ -1,7 +1,7 @@
-package game;
+package game.item;
 
 import board.*;
-import javafx.scene.shape.*;
+import game.util.Production;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
