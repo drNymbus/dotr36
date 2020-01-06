@@ -68,7 +68,7 @@ public class Soldier extends Sprite {
     public int getSPD() { return this.spd; }
 	/**
 	 * Copie le soldat pour en créer un nouveau.
-	 * 
+	 *
 	 * @return Nouveau soldat.
 	 */
 
@@ -78,7 +78,7 @@ public class Soldier extends Sprite {
     }
 	/**
 	 * Met à jour la position du soldat sur le champ de bataille.
-	 * 
+	 *
 	 * @param c     la cible du soldat.
 	 * @param avoid La liste de Sprite à éviter.
 	 */
@@ -154,7 +154,7 @@ public class Soldier extends Sprite {
 	/**
 	 * Gestion de la défence. Perds des point de vie en fonction de l'attaque du
 	 * soldat adverse.
-	 * 
+	 *
 	 * @param s Soldat attaquant.
 	 * @return true la défence est un succès, false sinon.
 	 */
@@ -166,3 +166,4 @@ public class Soldier extends Sprite {
         return true;
     }
 
+}

@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 /**
  * Classe de gestion des Sprite.
- * 
+ *
  */
 public class Sprite {
 	private Pane layer;
@@ -24,7 +24,7 @@ public class Sprite {
 
 	/**
 	 * Créé un sprite.
-	 * 
+	 *
 	 * @param layer la scène javafx.
 	 * @param c     la couleur du Sprite.
 	 * @param x     la position sur la largeur.
@@ -45,7 +45,7 @@ public class Sprite {
 
 	/**
 	 * Ajoute un rectangle à la liste.
-	 * 
+	 *
 	 * @param r un rectangle.
 	 */
 	public void addRectangle(Rectangle r) {
@@ -72,7 +72,7 @@ public class Sprite {
 
 	/**
 	 * Retourne la scène javafx.
-	 * 
+	 *
 	 * @return la scène( Pane ).
 	 */
 	public Pane getLayer() {
@@ -81,7 +81,7 @@ public class Sprite {
 
 	/**
 	 * Retourne la coordonnée du Sprite (largeur).
-	 * 
+	 *
 	 * @return la coordonnée(largeur).
 	 */
 	public int getX() {
@@ -91,40 +91,46 @@ public class Sprite {
 
 	/**
 	 * Retourne la coordonnée du Sprite (hauteur).
-	 * 
+	 *
 	 * @return la coordonnée(hauteur).
 	 */
 	public int getY() {
 		return this.y;
 	}
 
+    /**
+     * Retourne la couleur du Sprite.
+     * @return la couleur.
+     */
     public Color getColor() { return this.color; }
+
+    /**
+     * Repositionne la variable couleur du Sprite par la couleur c donnee.
+     * @param c la couleur.
+     */
     public void setColor(Color c) {
         this.color = c;
         this.base.setFill(c);
     }
 
-    public boolean isIn(Sprite s) {
-        if (s.getX() - s.getSize()/2 > base.getX() + this.size || s.getX() + s.getSize()/2 < base.getX())
-            return false;
-        if (s.getY() - s.getSize()/2 > base.getY() + this.size || s.getY() + s.getSize()/2 < base.getY())
-            return false;
-        return true;
+    /**
+	 * Défini la coordonnée du Sprite(largeur).
+	 *
+	 * @param x Coordonnée valide sur la grille.
+	 */
+    public void setX(int x) {
+        this.x = x;
+        this.base.setX(y - this.size / 2);
+        for (int i = 0; i < this.rects.size(); i++) {
+			Rectangle r = this.rects.get(i);
+			r.setX(r.getX() + (y - r.getX()));
+        }
     }
-
-    public boolean isIn(int sx, int sy, int ssize) {
-        if (sx - ssize/2 > base.getX() + this.size || sx + ssize/2 < base.getX())
-            return false;
-        if (sy - ssize/2 > base.getY() + this.size || sy + ssize/2 < base.getY())
-            return false;
-        return true;
-    }
-
 
 	/**
 	 * Défini la coordonnée du Sprite(hauteur).
-	 * 
-	 * @param x Coordonnée valide sur la grille.
+	 *
+	 * @param y Coordonnée valide sur la grille.
 	 */
 	public void setY(int y) {
 		this.y = y;
@@ -148,27 +154,27 @@ public class Sprite {
 	public int getSize() {
 		return this.size;
 	}
-/**
- * Retourne la couleur du Sprite.
- * @return la couleur.
- */
-	public Color getColor() {
-		return this.color;
-	}
+
 /**
  * Vérifie si  ce Sprite  entre en collision avec le Sprite s.
- * @param s un Sprite. 
+ * @param s un Sprite.
  * @return True si il rentre en collision, false sinon.
  */
-	public boolean isIn(Sprite s) {
-		/*
-		 * if (s.getX() >= base.getX() && s.getX() <= base.getX() + this.size) if
-		 * (s.getY() >= base.getY() && s.getY() <= base.getY() + this.size) return true;
-		 */
-		if (distance(s) < (s.size / 2))
-			return true;
-		return false;
-	}
+    public boolean isIn(Sprite s) {
+        if (s.getX() - s.getSize()/2 > base.getX() + this.size || s.getX() + s.getSize()/2 < base.getX())
+            return false;
+        if (s.getY() - s.getSize()/2 > base.getY() + this.size || s.getY() + s.getSize()/2 < base.getY())
+            return false;
+    return true;
+    }
+
+    public boolean isIn(int sx, int sy, int ssize) {
+        if (sx - ssize/2 > base.getX() + this.size || sx + ssize/2 < base.getX())
+            return false;
+        if (sy - ssize/2 > base.getY() + this.size || sy + ssize/2 < base.getY())
+            return false;
+        return true;
+    }
 /**
  * Retourne la distance entre ce sprite et le Sprite s.
  * @param s un Sprite.

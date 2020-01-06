@@ -42,7 +42,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Créé un chateau
-	 * 
+	 *
 	 * @param id    le buméro du chateau.
 	 * @param owner le propriétaire.
 	 * @param layer la scène javafx.
@@ -96,7 +96,6 @@ public class Castle extends Sprite   {
 		}
 		this.drawCastle();
 
-		this.reserve = 0;
 		Random rnd = new Random();
 		if (this.owner == Settings.NEUTRAL_ID) {
 			this.level=(1+rnd.nextInt(3));
@@ -107,40 +106,22 @@ public class Castle extends Sprite   {
 		}
 	}
 
-	public Direction getDoor() { return this.door; }
+	/**
+	 * Retourne la position en x de la porte.
+	 *
+	 * @return la position x de la porte.
+	 */
 	public int getDoorX() { return this.door_x; }
+	/**
+	 * Retourne la position en y de la porte.
+	 *
+	 * @return la position y de la porte.
+	 */
 	public int getDoorY() { return this.door_y; }
-
-
-		int armySyze = 7;
-		for (int i = 0; i < armySyze; i++) {
-			int tmp = r.nextInt(3);
-			switch (tmp) {
-			case 0:
-				Soldier s = new Soldier(this.soldiers.size(), Production.Chevalier, this.owner, this.target,
-						this.getLayer(), this.getColor(), this.getX(), this.getY());
-				s.removeFromLayer();
-				this.soldiers.add(s);
-				break;
-			case 1:
-				Soldier s1 = new Soldier(this.soldiers.size(), Production.Piquier, this.owner, this.target,
-						this.getLayer(), this.getColor(), this.getX(), this.getY());
-				s1.removeFromLayer();
-				this.soldiers.add(s1);
-				break;
-			case 2:
-				Soldier s2 = new Soldier(this.soldiers.size(), Production.Onagre, this.owner, this.target,
-						this.getLayer(), this.getColor(), this.getX(), this.getY());
-				s2.removeFromLayer();
-				this.soldiers.add(s2);
-				break;
-			}
-		}
-	}
 
 	/**
 	 * Retourne la direction de la porte.
-	 * 
+	 *
 	 * @return la direction de la porte, soit nord, soit est, soit ouest, soit sud.
 	 */
 	public Direction getDoor() {
@@ -149,7 +130,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie le trésor d'un chateau.
-	 * 
+	 *
 	 * @return la valeur de tresor.(int)
 	 */
 	public int getTresor() {
@@ -158,7 +139,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * change la valeur du trésor d'un chateau.
-	 * 
+	 *
 	 * @param tresor la valeur du trésor à mettre.
 	 */
 	public void setTresor(int tresor) {
@@ -167,7 +148,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie le niveau d'un chateau
-	 * 
+	 *
 	 * @return le niveau du chateau.(int)
 	 */
 	public int getLevel() {
@@ -176,7 +157,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Change le niveau d'un chateau
-	 * 
+	 *
 	 * @param level le nouveau niveau du chateau.
 	 */
 	public void setLevel(int level) {
@@ -185,7 +166,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie le numéro du chateau
-	 * 
+	 *
 	 * @return Le numéro associé au chateau, défini lors de la création du
 	 *         Battlefield.
 	 */
@@ -195,7 +176,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Défini le propriétaire du chateau.
-	 * 
+	 *
 	 * @param o le nouveau propriétaire.
 	 *          Settings.NEUTRAL_ID/Settings.ALLY_ID/Settings.ENNEMY_ID.
 	 */
@@ -205,7 +186,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie le propriétaire actuel du chateau
-	 * 
+	 *
 	 * @return soit ettings.NEUTRAL_ID soit Settings.ALLY_ID soit
 	 *         Settings.ENNEMY_ID.
 	 */
@@ -215,7 +196,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Défini la cible d'un chateau.
-	 * 
+	 *
 	 * @param t l'id d'un chateau.
 	 */
 	public void setTarget(int t) {
@@ -226,7 +207,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie la cible actuelle d'un chateau.
-	 * 
+	 *
 	 * @return la cible.
 	 */
 	public int getTarget() {
@@ -235,7 +216,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie le nombre de soldat présent dans un chateau.
-	 * 
+	 *
 	 * @return le nombre de soldat.
 	 */
 	public int getNbSoldiers() {
@@ -244,7 +225,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Liste des soldats présents dans le chateau sous forme de texte.
-	 * 
+	 *
 	 * @return le message correspondant à la liste des soldats présents.
 	 */
 	public String getSoldiers() {
@@ -258,7 +239,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Renvoie les productions du chateau.
-	 * 
+	 *
 	 * @return les productions du chateau.
 	 */
 	public ProductionTab getProduction() {
@@ -267,7 +248,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Ajoute un soldat à laliste des soldats du chateau
-	 * 
+	 *
 	 * @param s un soldat.
 	 */
 	public void addSoldier(Soldier s) {
@@ -277,7 +258,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Gestion de la production des soldats du chateau.
-	 * 
+	 *
 	 * @param t la production à ajouter
 	 */
 	public void addProd(Production t) {
@@ -321,7 +302,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Met à jour la production
-	 * 
+	 *
 	 * @param layer la scène javafx.
 	 */
 	public void updateProduction(Pane layer) {
@@ -351,7 +332,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Gestion de l'attaque.
-	 * 
+	 *
 	 * @param target l'id de la cible (chateau).
 	 * @param sdrs   la liste de soldat.
 	 * @param n      le nombre de soldat à envoyer
@@ -386,7 +367,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Gestion de l'attaque
-	 * 
+	 *
 	 * @param sdrs la liste de soldat.
 	 */
 	public void attack(ArrayList<Soldier> sdrs) {
@@ -405,7 +386,7 @@ public class Castle extends Sprite   {
 
 	/**
 	 * Gestion de la défence du chateau.
-	 * 
+	 *
 	 * @param sdrs la liste de soldat présent sur le champ de bataille.
 	 * @param atk  le soldat attaquant.
 	 */

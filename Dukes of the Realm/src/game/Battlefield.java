@@ -36,7 +36,7 @@ public class Battlefield  {
 
 	/**
 	 * initialise la carte, fait apparaitre les chateaux pratiquement aléatoirement.
-	 * 
+	 *
 	 * @param nb_castles nombre de chateaux
 	 * @param layer      la scène javafx
 	 * @param in         la gestion des input
@@ -84,7 +84,7 @@ public class Battlefield  {
 				}
 
 				Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
-				c.initNeutral();
+				// c.initNeutral();
 				this.castles.add(c);
 
 				c = new Castle(i-1, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
@@ -97,22 +97,14 @@ public class Battlefield  {
 		if (i == 1) {
 			Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, this.width / 2, this.height / 2,
 					dirs[rnd.nextInt(4)]);
-			c.initNeutral();
+			// c.initNeutral();
 			this.castles.add(c);
 		}
 	}
 
-	public Battlefield(Pane layer, Input in,ArrayList<Castle> c, ArrayList<Soldier> s) {
-		this.castles=(ArrayList<Castle>) c.clone();
-		this.soldiers= (ArrayList<Soldier>) s.clone();
-		this.width= Settings.GAME_WIDTH;
-		this.height= Settings.GAME_HEIGHT;
-		this.layer=layer;
-		this.input=in;
-	}
 	/**
 	 * Retourne un chateau .
-	 * 
+	 *
 	 * @param id l'identité du chateau.
 	 * @return le chateau , ou null si il n'a pas été trouvé.
 	 */
@@ -127,7 +119,7 @@ public class Battlefield  {
 
 	/**
 	 * retourne une liste de chateau.
-	 * 
+	 *
 	 * @param id l'identité du chateau
 	 * @return la liste des chateaux
 	 */
@@ -147,7 +139,7 @@ public class Battlefield  {
 
 	/**
 	 * recherche un soldat spécifique
-	 * 
+	 *
 	 * @param id le numéro du soldat.
 	 * @return le soldat si il est trouvé, sinon null
 	 */
@@ -162,7 +154,7 @@ public class Battlefield  {
 
 	/**
 	 * renvoie la liste des soldats présents dans ce chateau.
-	 * 
+	 *
 	 * @return la liste des soldats présents dans ce chateau.
 	 */
 	public ArrayList<Soldier> getSoldiers() {
@@ -220,7 +212,7 @@ public class Battlefield  {
 	/**
 	 * Gestion des entrées clavier ( pause, reprise du jeu et fermeture de la
 	 * fenêtre ).
-	 * 
+	 *
 	 * @param input la classe input associé à la scène.
 	 * @param now   la temps actuel associé à la scène.
 	 */
