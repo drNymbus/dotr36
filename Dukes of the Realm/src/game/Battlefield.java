@@ -187,8 +187,9 @@ public class Battlefield {
 				if(c.getOwner() == s.getOwner()) {
 					c.addSoldier(s);
 					this.soldiers.remove(i);
+				} else {
+					c.defend(this.soldiers, s);
 				}
-				c.defend(this.soldiers, s);
 			}
 		}
 	}

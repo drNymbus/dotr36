@@ -264,7 +264,7 @@ public class Castle extends Sprite   {
 	 * @param s un soldat.
 	 */
 	public void addSoldier(Soldier s) {
-		s.removeFromLayer();
+		s.setX(this.getX()); s.setY(this.getY());
 		this.soldiers.add(0, s);
 	}
 	// public ArrayList<Soldier> getSoldiers() { return this.soldiers; }
@@ -350,7 +350,7 @@ public class Castle extends Sprite   {
 		this.setTarget(target);
 		int i = 0;
 		while (i < this.nb_soldiers && this.soldiers.size() > 0) {
-			Soldier s = this.soldiers.get(i);
+			Soldier s = this.soldiers.get(0);
 			s.setX(this.door_x + this.door_sx/2); s.setY(this.door_y + this.door_sy/2);
 			switch (this.door) {
 				case NORTH:
