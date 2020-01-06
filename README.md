@@ -48,6 +48,6 @@ Differentes unitees peuvent etres crees:
     * 1 Speed
 
 # A AMELIORER
-    Pathfinding peut être améliorer pour contourner le chateau cible jusqu'a la porte.
-    Les touches permmettant de Pause/Resume n'ont parfois aucun effet.
-    Certains chateau peuvent apparaitre dans la bar d'UI ou au bord de l'ecran.
+- [ ] Pathfinding peut être améliorer pour contourner le chateau cible jusqu'a la porte.
+- [ ] Les touches permmettant de Pause/Resume n'ont parfois aucun effet.
+- [ ] Certains chateau peuvent apparaitre dans la bar d'UI ou au bord de l'ecran.
