@@ -1,6 +1,6 @@
 package game.util;
 /**
- * Type disponible pour production.
+ * enum util pour garder la traque de la production des chateaux, ainsi que le constructeur de Soldier().
  */
 public enum Production {
     None ("None"),

@@ -139,7 +139,7 @@ public class Main extends Application {
 					MenuItem levelUp = new MenuItem(
 							"LVL UP(" + (a.getLevel() + 1) + "," + (1000 * a.getLevel()) + "G)");
 					MenuItem stopProd = new MenuItem("Stop Production");
-					
+
 					MenuItem stopAttack = new MenuItem("Stop Attack");
 					produce_piquier.setOnAction(evt -> a.addProd(Production.Piquier));
 					produce_chevalier.setOnAction(evt -> a.addProd(Production.Chevalier));
@@ -246,7 +246,7 @@ public class Main extends Application {
 
 	/**
 	 * change les élements affichés dans l'IU
-	 * 
+	 *
 	 * @param i le propriétaire du chateau.
 	 */
 	public void display_switch(int i) {
@@ -275,7 +275,7 @@ public class Main extends Application {
 
 	/**
 	 * Créé le message de gameover. Propose de recommencer le jeu.
-	 * 
+	 *
 	 * @param winner l'id du vainqueur. Soit allié soit ennemi.
 	 */
 	public void createEndMessage(int winner) {
