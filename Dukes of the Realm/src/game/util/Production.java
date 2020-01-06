@@ -1,5 +1,7 @@
 package game.util;
-
+/**
+ * Type disponible pour production.
+ */
 public enum Production {
     None ("None"),
     Piquier ("Piquier"),

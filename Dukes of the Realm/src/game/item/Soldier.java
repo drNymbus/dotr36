@@ -6,7 +6,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
+/**
+ * Classe de gestion des soldats.
+ */
+
 public class Soldier extends Sprite {
+
     private int id;
     private int owner;
     private int target;
@@ -24,6 +29,9 @@ public class Soldier extends Sprite {
 				(owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR),
 				x - Settings.SIZE_SOLDIER/2, y - Settings.SIZE_SOLDIER/2, Settings.SIZE_SOLDIER);
 		this.id = id;
+
+
+
         this.owner = owner;
         this.target = target;
 
@@ -58,11 +66,22 @@ public class Soldier extends Sprite {
     public int getLP() { return this.lp; }
     public int getATK() { return this.atk; }
     public int getSPD() { return this.spd; }
+	/**
+	 * Copie le soldat pour en créer un nouveau.
+	 * 
+	 * @return Nouveau soldat.
+	 */
 
     public Soldier copy() {
         Soldier n = new Soldier(this.id, this.type, this.owner, this.target, this.getLayer(), this.getColor(), this.getX(), this.getY());
         return n;
     }
+	/**
+	 * Met à jour la position du soldat sur le champ de bataille.
+	 * 
+	 * @param c     la cible du soldat.
+	 * @param avoid La liste de Sprite à éviter.
+	 */
 
     public void update(Castle c_target, ArrayList<Castle> avoid) {
         int old_x = this.getX(), old_y = this.getY();
@@ -132,7 +151,13 @@ public class Soldier extends Sprite {
         }
 
     }
-
+	/**
+	 * Gestion de la défence. Perds des point de vie en fonction de l'attaque du
+	 * soldat adverse.
+	 * 
+	 * @param s Soldat attaquant.
+	 * @return true la défence est un succès, false sinon.
+	 */
     public boolean defend(Soldier s) {
         this.lp -= s.getATK();
         if (this.lp < 1) {
@@ -140,4 +165,4 @@ public class Soldier extends Sprite {
         }
         return true;
     }
-}
+
