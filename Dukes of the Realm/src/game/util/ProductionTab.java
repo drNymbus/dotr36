@@ -6,6 +6,7 @@ import game.util.Production;
 // import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 
+
 /**
  * Classe de gestion de production.
  */
@@ -135,5 +136,7 @@ public class ProductionTab   {
 		}
 		return msg;
 	}
+
+
 
 }

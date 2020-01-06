@@ -15,7 +15,7 @@ public class Settings {
 	public static final int NB_CASTLES = 5;
 
 	public static final int SIZE_CASTLE= 40;
-	public static final int SIZE_SOLDIER= 4;
+	public static final int SIZE_SOLDIER= 10;
 
 	public static final int NEUTRAL_ID = 0;
 	public static final int ALLY_ID = 1;

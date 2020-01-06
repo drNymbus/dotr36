@@ -88,19 +88,6 @@ public class Sprite {
 		return this.x;
 	}
 
-	/**
-	 * Défini la position du Sprite(largeur).
-	 * 
-	 * @param x Poisition valide sur la grille.
-	 */
-	public void setX(int x) {
-		this.x = x;
-		this.base.setX(x - this.size / 2);
-		for (int i = 0; i < this.rects.size(); i++) {
-			Rectangle r = this.rects.get(i);
-			r.setX(r.getX() + (x - r.getX()));
-		}
-	}
 
 	/**
 	 * Retourne la coordonnée du Sprite (hauteur).
@@ -110,6 +97,29 @@ public class Sprite {
 	public int getY() {
 		return this.y;
 	}
+
+    public Color getColor() { return this.color; }
+    public void setColor(Color c) {
+        this.color = c;
+        this.base.setFill(c);
+    }
+
+    public boolean isIn(Sprite s) {
+        if (s.getX() - s.getSize()/2 > base.getX() + this.size || s.getX() + s.getSize()/2 < base.getX())
+            return false;
+        if (s.getY() - s.getSize()/2 > base.getY() + this.size || s.getY() + s.getSize()/2 < base.getY())
+            return false;
+        return true;
+    }
+
+    public boolean isIn(int sx, int sy, int ssize) {
+        if (sx - ssize/2 > base.getX() + this.size || sx + ssize/2 < base.getX())
+            return false;
+        if (sy - ssize/2 > base.getY() + this.size || sy + ssize/2 < base.getY())
+            return false;
+        return true;
+    }
+
 
 	/**
 	 * Défini la coordonnée du Sprite(hauteur).

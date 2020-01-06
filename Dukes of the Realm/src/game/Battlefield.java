@@ -4,8 +4,9 @@ package game;
 import java.util.ArrayList;
 import java.util.Random;
 
-import board.Input;
-import board.Settings;
+// import board.Input;
+// import board.Settings;
+import board.*;
 import game.item.Castle;
 import game.item.Soldier;
 import game.item.Sprite;
@@ -53,10 +54,9 @@ public class Battlefield  {
 		this.layer = layer;
 
 		Random rnd = new Random();
-		Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
-		int i = nb_castles;
-		boolean base = true;
+		Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
+		int i = nb_castles; boolean base = true;
 		while (i > 0 && i != 1) {
 			if (base) {
 				int x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
@@ -64,8 +64,8 @@ public class Battlefield  {
 
 				Castle c = new Castle(i, Settings.ALLY_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
-				c = new Castle(i - 1, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y),
-						dirs[rnd.nextInt(4)]);
+				c = new Castle(i-1, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+
 				this.castles.add(c);
 
 				base = false;
@@ -78,16 +78,17 @@ public class Battlefield  {
 					y = rnd.nextInt(this.height / 2 - Settings.SIZE_CASTLE) + this.height / 2;
 					pos_ok = true;
 					for (Castle c : this.castles)
-						if (c.distance(x, y) < 100)
-							pos_ok = false;
+
+						if (c.distance(x,y) > Settings.SIZE_CASTLE * 2) pos_ok = true;
+
 				}
 
 				Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
 				c.initNeutral();
 				this.castles.add(c);
-				c = new Castle(i - 1, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y),
-						dirs[rnd.nextInt(4)]);
-				c.initNeutral();
+
+				c = new Castle(i-1, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+
 				this.castles.add(c);
 			}
 
@@ -197,14 +198,19 @@ public class Battlefield  {
 			gameover = Settings.ALLY_ID;
 
 		for (int i = 0; i < this.soldiers.size(); i++) {
-			System.out.println("NB_SOLDIERS:" + this.soldiers.size());
+			// System.out.println("NB_SOLDIERS:" + this.soldiers.size());
 			Soldier s = this.soldiers.get(i);
 			Castle c = this.getCastle(s.getTarget());
-			ArrayList<Sprite> avoid = new ArrayList<Sprite>(this.getCastles(s.getOwner()));
-			s.update(c, avoid);
-			if (s.isIn(c)) {
-				if (c.getOwner() == s.getOwner())
+
+			// ArrayList<Sprite> avoid = new ArrayList<Sprite>(this.getCastles(s.getOwner()));
+			s.update(c, this.getCastles());
+			if (c.isSoldierIn(s)) {
+				System.out.println("Soldier:" + s.getId() + " in Castle:" + c.getId());
+				if(c.getOwner() == s.getOwner()) {
+
 					c.addSoldier(s);
+					this.soldiers.remove(i);
+				}
 				c.defend(this.soldiers, s);
 				this.soldiers.remove(i);
 			}
