@@ -11,6 +11,8 @@ public class Soldier extends Sprite {
     private int owner;
     private int target;
 
+    private int dx, dy, stuck;
+
     private Production type;
     private int lp;
     private int atk;
@@ -20,10 +22,13 @@ public class Soldier extends Sprite {
         // Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
     	super(layer,
 				(owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR),
-				x, y, Settings.SIZE_SOLDIER);
+				x - Settings.SIZE_SOLDIER/2, y - Settings.SIZE_SOLDIER/2, Settings.SIZE_SOLDIER);
 		this.id = id;
         this.owner = owner;
         this.target = target;
+
+        this.dx = 0; this.dy = 0;
+        this.stuck = 0;
 
         this.type = t;
         switch (t) {
@@ -59,57 +64,73 @@ public class Soldier extends Sprite {
         return n;
     }
 
-    public void update(Castle c, ArrayList<Sprite> avoid) {
-        int target_x = c.getX(), target_y = c.getY();
-        switch (c.getDoor()) {
-            case NORTH:
-                target_y -= Settings.SIZE_CASTLE/2;
-                break;
-            case EAST:
-                target_x += Settings.SIZE_CASTLE/2;
-                break;
-            case SOUTH:
-                target_y += Settings.SIZE_CASTLE/2;
-                break;
-            case WEST:
-                target_x -= Settings.SIZE_CASTLE/2;
-                break;
+    public void update(Castle c_target, ArrayList<Castle> avoid) {
+        int old_x = this.getX(), old_y = this.getY();
+
+        double dist = c_target.doorDistance(this.getX(), this.getY());
+        double dist_p = c_target.doorDistance(this.getX() + this.spd, this.getY());
+        double dist_m = c_target.doorDistance(this.getX() - this.spd, this.getY());
+        if (dist_p > dist_m) {
+            if (dist > dist_m) {
+                this.dx = -1;
+            } else {
+                this.dx = 0;
+            }
+        } else if (dist > dist_p){
+            this.dx = 1;
+        } else {
+            this.dx = 0;
         }
 
-        int dx = 0, dy = 0;
-        int tmp = this.spd; boolean over = false;
-        if (this.getX() != target_x)
-            while (!over || tmp > 0) {
-                dx = (this.getX() - target_x > 0) ? -1 : 1;
-                Soldier cpy = this.copy();
-                cpy.setX(cpy.getX() + dx);
-                for (int i=0; i < avoid.size(); i++) {
-                    if (avoid.get(i).isIn(this)) over = true;
-                }
+        if (this.dx != 0) {
+            for (int i=0; i < avoid.size(); i++) {
+                if (avoid.get(i).isIn(this.getX()+(dx*this.spd), this.getY(), this.getSize()))
+                    this.dx = 0;
+            }
+        }
 
-                if (over) {
-                    this.setX(this.getX() + dx);
-                    tmp--;
-                    target_x = -1*(target_x);
-                }
+        dist = c_target.doorDistance(this.getX(), this.getY());
+        dist_p = c_target.doorDistance(this.getX(), this.getY() + this.spd);
+        dist_m = c_target.doorDistance(this.getX(), this.getY() - this.spd);
+        if (dist_p > dist_m) {
+            if (dist > dist_m) {
+                this.dy = -1;
+            } else {
+                this.dy = 0;
+            }
+        } else if (dist > dist_p) {
+            this.dy = 1;
+        } else {
+            this.dy = 0;
+        }
+
+        if (this.dy != 0) {
+            for (int i=0; i < avoid.size(); i++) {
+                if (avoid.get(i).isIn(this.getX(), this.getY() + (dy*this.spd), this.getSize()))
+                    this.dy = 0;
+            }
+        }
+
+        this.setX(this.getX() + (this.dx*this.spd));
+        this.setY(this.getY() + (this.dy*this.spd));
+
+        if (old_x == this.getX() && old_y == this.getY()) {
+            this.stuck ++;
+            if (c_target.doorDistance(this.getX() + this.spd, this.getY()) > c_target.doorDistance(this.getX() - this.spd, this.getY())) {
+                this.setX(this.getX() - this.spd);
+            } else {
+                this.setX(this.getX() + this.spd);
             }
 
-        tmp = this.spd; over = true;
-        if (this.getY() != target_y)
-            while (!over || tmp > 0) {
-                dy = (this.getY() - target_y > 0) ? -1 : 1;
-                Soldier cpy = this.copy();
-                cpy.setY(cpy.getY() + dy);
-                for (int i=0; i < avoid.size(); i++) {
-                    if (avoid.get(i).isIn(this)) over = true;
-                }
-
-                if (!over) {
-                    this.setY(this.getY() + dy);
-                    tmp--;
-                    target_y = -1*(target_y);
-                }
+            if (c_target.doorDistance(this.getX(), this.getY() + this.spd) > c_target.doorDistance(this.getX(), this.getY() - this.spd)) {
+                this.setY(this.getY() - this.spd);
+            } else {
+                this.setY(this.getY() + this.spd);
             }
+        } else {
+            this.stuck = 0;
+        }
+
     }
 
     public boolean defend(Soldier s) {

@@ -64,11 +64,25 @@ public class Sprite {
     public int getSize() { return this.size; }
 
     public Color getColor() { return this.color; }
+    public void setColor(Color c) {
+        this.color = c;
+        this.base.setFill(c);
+    }
 
     public boolean isIn(Sprite s) {
-        if (s.getX() >= base.getX() && s.getX() <= base.getX() + this.size)
-            if (s.getY() >= base.getY() && s.getY() <= base.getY() + this.size) return true;
-        return false;
+        if (s.getX() - s.getSize()/2 > base.getX() + this.size || s.getX() + s.getSize()/2 < base.getX())
+            return false;
+        if (s.getY() - s.getSize()/2 > base.getY() + this.size || s.getY() + s.getSize()/2 < base.getY())
+            return false;
+        return true;
+    }
+
+    public boolean isIn(int sx, int sy, int ssize) {
+        if (sx - ssize/2 > base.getX() + this.size || sx + ssize/2 < base.getX())
+            return false;
+        if (sy - ssize/2 > base.getY() + this.size || sy + ssize/2 < base.getY())
+            return false;
+        return true;
     }
 
     public double distance(Sprite s) {

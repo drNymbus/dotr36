@@ -21,16 +21,17 @@ public class Castle extends Sprite {
 	private int target;
 	private int nb_soldiers;
 	private Direction door;
+	private int door_x, door_y;
+	private int door_sx, door_sy;
 
 	private int tresor;
 	private int level;
 
 	public Castle(int id, int owner, Pane layer, int x, int y, Direction d) {
 		super(layer,
-				(owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR),
-				x, y, Settings.SIZE_CASTLE);
-		// Color c = (owner == 1) ? Settings.ALLY_COLOR : ((owner == -1) ?
-		// Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR);
+				(owner == Settings.ALLY_ID) ? Settings.ALLY_COLOR : ((owner == Settings.ENNEMY_ID) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR),
+				x - Settings.SIZE_CASTLE/2, y - Settings.SIZE_CASTLE/2, Settings.SIZE_CASTLE);
+
 		this.id = id;
 		this.owner = owner;
 		this.target = -1;
@@ -39,19 +40,52 @@ public class Castle extends Sprite {
 		this.production = new ProductionTab();
 		this.soldiers = new ArrayList<Soldier>();
 		this.door = d;
+		switch (this.door) {
+			case NORTH:
+				this.door_sx = Settings.SIZE_CASTLE/2;
+				this.door_sy = Settings.SIZE_CASTLE/10;
+
+				this.door_x = x - this.door_sx/2;
+				this.door_y = y - Settings.SIZE_CASTLE/2;
+				break;
+			case EAST:
+				this.door_sx = Settings.SIZE_CASTLE/10;
+				this.door_sy = Settings.SIZE_CASTLE/2;
+
+				this.door_x = x + Settings.SIZE_CASTLE/2 - this.door_sx;
+				this.door_y = y - this.door_sy/2;
+				break;
+			case SOUTH:
+				this.door_sx = Settings.SIZE_CASTLE/2;
+				this.door_sy = Settings.SIZE_CASTLE/10;
+
+				this.door_x = x - this.door_sx/2;
+				this.door_y = y + Settings.SIZE_CASTLE/2 - this.door_sy;
+				break;
+			case WEST:
+				this.door_sx = Settings.SIZE_CASTLE/10;
+				this.door_sy = Settings.SIZE_CASTLE/2;
+
+				this.door_x = x - Settings.SIZE_CASTLE/2;
+				this.door_y = y - this.door_sy/2;
+				break;
+		}
+		this.drawCastle();
+
 		this.reserve = 0;
 		Random rnd = new Random();
-		if(owner==0)
-		{
+		if (this.owner == Settings.NEUTRAL_ID) {
 			this.level=(1+rnd.nextInt(3));
 			this.tresor=(rnd.nextInt(100));
-		}else{
+		} else {
 			this.level=1;
 			this.tresor=0;
 		}
 	}
 
 	public Direction getDoor() { return this.door; }
+	public int getDoorX() { return this.door_x; }
+	public int getDoorY() { return this.door_y; }
 
 	// getter setter
 	public int getTresor() { return tresor; }
@@ -112,7 +146,7 @@ public class Castle extends Sprite {
 			case Onagre:
 				if (this.tresor > 1000) {
 					add = true;
-					tresor -= 100;
+					tresor -= 1000;
 				}
 				break;
 		}
@@ -127,23 +161,6 @@ public class Castle extends Sprite {
 	}
 
 	public void updateProduction(Pane layer) {
-		int x = this.getX() + Settings.SIZE_CASTLE / 2;
-		int y = this.getY() + Settings.SIZE_CASTLE / 2;
-		switch (this.door) {
-			case NORTH:
-				y -= Settings.SIZE_SOLDIER / 2;
-				break;
-			case EAST:
-				x += Settings.SIZE_CASTLE / 2;
-				break;
-			case SOUTH:
-				y += Settings.SIZE_SOLDIER / 2;
-				break;
-			case WEST:
-				x -= Settings.SIZE_CASTLE / 2;
-				break;
-		}
-
 		if (this.production.size() == 0)
 			return;
 		Production prod = this.production.getProduction();
@@ -151,7 +168,6 @@ public class Castle extends Sprite {
 			this.level++;
 		} else if (prod != Production.None) {
 			Soldier s = new Soldier(this.soldiers.size(), prod, this.owner, this.target, layer, this.getColor(), this.getX(), this.getY());
-			s.removeFromLayer();
 			this.soldiers.add(s);
 		}
 	}
@@ -161,22 +177,23 @@ public class Castle extends Sprite {
 		this.setTarget(target);
 		int i = 0;
 		while (i < this.nb_soldiers && this.soldiers.size() > 0) {
-			Soldier s = this.soldiers.get(0);
+			Soldier s = this.soldiers.get(i);
+			s.setX(this.door_x + this.door_sx/2); s.setY(this.door_y + this.door_sy/2);
 			switch (this.door) {
 				case NORTH:
-					s.setY(s.getY() - s.getSize()/2);
+					s.setY(s.getY() - s.getSize() - 2);
 					break;
 				case EAST:
-					s.setX(s.getX() + s.getSize()/2);
+					s.setX(s.getX() + s.getSize() + 2);
 					break;
 				case SOUTH:
-					s.setY(s.getY() + s.getSize()/2);
+					s.setY(s.getY() + s.getSize() + 2);
 					break;
 				case WEST:
-					s.setX(s.getX() - s.getSize()/2);
+					s.setX(s.getX() - s.getSize() - 2);
 					break;
 			}
-			s.addToLayer();
+			// s.addToLayer();
 			sdrs.add(s);
 			this.soldiers.remove(0);
 			i++;
@@ -190,21 +207,30 @@ public class Castle extends Sprite {
 	}
 
 	public void defend(ArrayList<Soldier> sdrs, Soldier atk) {
-		Soldier dfd = this.soldiers.get(0);
-		if (dfd.defend(atk)) {
-			if (!atk.defend(dfd))
-				atk.removeFromLayer();
-				sdrs.remove(atk);
-		} else {
-			dfd.removeFromLayer();
-			this.soldiers.remove(0);
+		if (this.soldiers.size() > 0) {
+			Soldier dfd = this.soldiers.get(0);
+			if (dfd.defend(atk)) {
+				if (!atk.defend(dfd)) {
+					atk.removeFromLayer();
+					sdrs.remove(atk);
+				}
+			} else {
+				dfd.removeFromLayer();
+				this.soldiers.remove(0);
+			}
 		}
 
 		if (this.soldiers.size() <= 0) {
 			this.owner = atk.getOwner();
-			this.getShape().setFill((owner == Settings.ALLY_ID) ? Settings.ALLY_COLOR : ((owner == Settings.ENNEMY_ID) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR));
+			this.setColor((owner == Settings.ALLY_ID) ? Settings.ALLY_COLOR : ((owner == Settings.ENNEMY_ID) ? Settings.ENNEMY_COLOR : Settings.NEUTRAL_COLOR));
 			this.production.reset();
 			while (this.soldiers.size() > 0) this.soldiers.remove(0);
+		} else {
+			Soldier dfd = this.soldiers.get(0);
+			if (!atk.defend(dfd)) {
+				atk.removeFromLayer();
+				sdrs.remove(atk);
+			}
 		}
 	}
 
@@ -222,58 +248,25 @@ public class Castle extends Sprite {
 	//
 	//
 	//
-
 	public void drawCastle() {
-        int x = 0, y = 0, sx = 0, sy = 0;
-        switch (this.door) {
-            case NORTH:
-                x = this.getX() - this.getSize()/4; sx = this.getSize()/4*3;
-                y = this.getY() - this.getSize()/2; sy = this.getSize()/10;
-				break;
-			case EAST:
-                x = this.getX() - this.getSize()/2; sx = this.getSize()/10;
-                y = this.getY() - this.getSize()/4; sy = this.getSize()/4*3;
-				break;
-			case SOUTH:
-                x = this.getX() - this.getSize()/4; sx = this.getSize()/4*3;
-                y = this.getY() + this.getSize()/2 - this.getSize()/10; sy = this.getSize()/10;
-				break;
-			case WEST:
-                x = this.getX() + this.getSize()/2 - this.getSize()/10; sx = this.getSize()/10;
-                y = this.getY() - this.getSize()/4; sy = this.getSize()/4*3;
-				break;
-        }
-        Rectangle rect_door = new Rectangle(x, y, sx, sy);
+        Rectangle rect_door = new Rectangle(this.door_x, this.door_y, this.door_sx, this.door_sy);
         rect_door.setFill(Color.BLACK);
-        this.addRectangle(rect_door);
-		this.addToLayer();
+        // this.addRectangle(rect_door);
+        this.getLayer().getChildren().add(rect_door);
     }
 
+	public double doorDistance(int x, int y) {
+		double tmpX = Math.pow((x - (this.door_x + this.door_sx/2)), 2);
+		double tmpY = Math.pow((y - (this.door_y + this.door_sy/2)), 2);
+		return Math.sqrt(tmpX + tmpY);
+	}
+
 	public boolean isSoldierIn(Soldier s) {
-		boolean in = false;
-		switch (this.door) {
-			case NORTH:
-				if (s.getY() > this.getY() && s.getY() < this.getY() + this.getSize()/10)
-					if (s.getX() > this.getX() + this.getSize()/4 && s.getX() < this.getX() + this.getSize()/4*3)
-						in = true;
-				break;
-			case EAST:
-				if (s.getX() > this.getX() && s.getY() < this.getX() + this.getSize()/10)
-					if (s.getY() > this.getY() + this.getSize()/4 && s.getY() < this.getY() + this.getSize()/4*3)
-						in = true;
-				break;
-			case SOUTH:
-				if (s.getY() > this.getY() + this.getSize()/10*9 && s.getY() < this.getY() + this.getSize())
-					if (s.getX() > this.getX() + this.getSize()/4 && s.getX() < this.getX() + this.getSize()/4*3)
-						in = true;
-				break;
-			case WEST:
-				if (s.getX() > this.getX() + this.getSize()/10*9 && s.getY() < this.getX() + this.getSize())
-					if (s.getY() > this.getY() + this.getSize()/4 && s.getY() < this.getY() + this.getSize()/4*3)
-						in = true;
-				break;
-		}
-		return in;
+		if (s.getX() - s.getSize()/2 > this.door_x + this.door_sx || s.getX() + s.getSize()/2 < this.door_x)
+            return false;
+        if (s.getY() - s.getSize()/2 > this.door_y + this.door_sy || s.getY() + s.getSize()/2 < this.door_y)
+            return false;
+        return true;
 	}
 
 }

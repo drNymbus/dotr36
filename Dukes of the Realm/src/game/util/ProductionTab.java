@@ -57,8 +57,8 @@ public class ProductionTab {
     }
 
     public void reset() {
-        while (this.time.size() > 0) this.time.remove(0);
-        while (this.type.size() > 0) this.type.remove(0);
+        this.time.clear();
+        this.type.clear();
     }
 
     public String toString() {

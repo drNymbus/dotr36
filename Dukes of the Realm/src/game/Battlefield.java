@@ -3,8 +3,9 @@ package game;
 import java.util.ArrayList;
 import java.util.Random;
 
-import board.Input;
-import board.Settings;
+// import board.Input;
+// import board.Settings;
+import board.*;
 import game.item.Castle;
 import game.item.Soldier;
 import game.item.Sprite;
@@ -34,13 +35,8 @@ public class Battlefield {
 
 		Random rnd = new Random();
 		Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-		int i = nb_castles; boolean base = true;
 
-		// if (nb_castles%2 == 1) {
-		// 	Castle c = new Castle(0, Settings.NEUTRAL_ID, this.layer, this.width/2, this.height/2, Direction(rnd.nextInt(4)));
-		// 	this.castles.ass(c);
-		// 	i++;
-		// }
+		int i = nb_castles; boolean base = true;
 		while (i > 0 && i != 1) {
 			if (base) {
 				int x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
@@ -48,7 +44,7 @@ public class Battlefield {
 
 				Castle c = new Castle(i, Settings.ALLY_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
-				c = new Castle(i, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+				c = new Castle(i-1, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
 
 				base = false;
@@ -61,12 +57,12 @@ public class Battlefield {
 					y = rnd.nextInt(this.height/2 - Settings.SIZE_CASTLE) + this.height/2;
 
 					for (Castle c : this.castles)
-						if (c.distance(x,y) > Settings.SIZE_CASTLE) pos_ok = true;
+						if (c.distance(x,y) > Settings.SIZE_CASTLE * 2) pos_ok = true;
 				}
 
 				Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
-				c = new Castle(i, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+				c = new Castle(i-1, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
 			}
 
@@ -77,34 +73,6 @@ public class Battlefield {
 			Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, this.width/2, this.height/2, dirs[rnd.nextInt(4)]);
 			this.castles.add(c);
 		}
-		// while (i < nb_castles) {
-		// 	int owner = (i == 0) ? Settings.ALLY_ID : ((i == 1) ? Settings.ENNEMY_ID : Settings.NEUTRAL_ID);
-		//
-		// 	int x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-		// 	int y = rnd.nextInt(this.height - Settings.SIZE_CASTLE);
-		//
-		// 	Direction d = dirs[rnd.nextInt(4)];
-		//
-		// 	boolean pos_ok = false;
-		// 	while (i > 0 && !pos_ok) {
-		// 		x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-		// 		y = rnd.nextInt(this.height - Settings.SIZE_CASTLE);
-		//
-		// 		if (i == 1) {
-		// 			if (this.castles.get(0).distance(x,y) < Settings.SIZE_CASTLE*5)
-		// 				pos_ok = true;
-		// 		} else {
-		// 			for (Castle c : this.castles) {
-		// 				if (c.distance(x,y) > Settings.SIZE_CASTLE) pos_ok = true;
-		// 			}
-		// 		}
-		//
-		// 	}
-		//
-		// 	Castle c = new Castle(i, owner, this.layer, x, y, d);
-		// 	this.castles.add(c);
-		// 	i++;
-		// }
 	}
 
 	public Castle getCastle(int id) {
@@ -154,8 +122,6 @@ public class Battlefield {
 
 			c.updateGold();
 			c.updateProduction(this.layer);
-			// if(c.getTarget()!=-1)
-			// 	c.attack(this.soldiers);
 		}
 
 		if(allycount==0)
@@ -164,14 +130,17 @@ public class Battlefield {
 			gameover=Settings.ALLY_ID;
 
 		for (int i = 0; i < this.soldiers.size(); i++) {
-			System.out.println("NB_SOLDIERS:" + this.soldiers.size());
+			// System.out.println("NB_SOLDIERS:" + this.soldiers.size());
 			Soldier s = this.soldiers.get(i);
 			Castle c = this.getCastle(s.getTarget());
-			ArrayList<Sprite> avoid = new ArrayList<Sprite>(this.getCastles(s.getOwner()));
-			s.update(c, avoid);
+			// ArrayList<Sprite> avoid = new ArrayList<Sprite>(this.getCastles(s.getOwner()));
+			s.update(c, this.getCastles());
 			if (c.isSoldierIn(s)) {
-				if(c.getOwner() == s.getOwner())
+				System.out.println("Soldier:" + s.getId() + " in Castle:" + c.getId());
+				if(c.getOwner() == s.getOwner()) {
 					c.addSoldier(s);
+					this.soldiers.remove(i);
+				}
 				c.defend(this.soldiers, s);
 			}
 		}
