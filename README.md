@@ -34,18 +34,18 @@ En cliquant sur un chateau qui ne vous appartient pas, vous avez alors l'option 
 ainsi que de choisir combien d'unitees a envoyer (entre 1 et 5, les unitees sont envoyes dans l'ordre de creation).
 
 Differentes unitees peuvent etres crees:
-    * Piquier (100 Gold): unitee basique
-        * 1 Life Point,
-        * 1 Attack,
-        * 2 Speed
-    * Chevalier (500 Gold): unitee plus rapide et plus forte
-        * 3 Life Point,
-        * 6 Attack,
-        * 5 Speed
-    * Onagre (1000 Gold): unitee extrement puissante et tenace, cependant cette unitee peu rapide
-        * 5 Life Point,
-        * 10 Attack,
-        * 1 Speed
+* Piquier (100 Gold): unitee basique
+    * 1 Life Point,
+    * 1 Attack,
+    * 2 Speed
+* Chevalier (500 Gold): unitee plus rapide et plus forte
+    * 3 Life Point,
+    * 6 Attack,
+    * 5 Speed
+* Onagre (1000 Gold): unitee extrement puissante et tenace, cependant cette unitee peu rapide
+    * 5 Life Point,
+    * 10 Attack,
+    * 1 Speed
 
 # A AMELIORER
     Pathfinding peut être améliorer pour contourner le chateau cible jusqu'a la porte.
