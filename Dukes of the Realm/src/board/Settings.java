@@ -1,7 +1,9 @@
 package board;
 
 import javafx.scene.paint.Color;
-
+/**
+ * Classe de paramètre du jeu.
+ */
 public class Settings {
 
 	public static final double SCENE_WIDTH = 800;

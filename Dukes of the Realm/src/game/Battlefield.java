@@ -1,5 +1,6 @@
 package game;
 
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -12,101 +13,108 @@ import game.util.Direction;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 
-public class Battlefield {
+/**
+ * Classe de gestion du jeu.
+ */
+public class Battlefield  {
+	/** Largeur et Hauteur de la carte. */
 	private int width, height;
+	/** Liste des chateaux. */
 	private ArrayList<Castle> castles;
+	/** Liste des soldats présents sur la carte. */
 	private ArrayList<Soldier> soldiers;
-
-	public boolean pause=false;
+	/**
+	 * Défini si le jeu est en pause ou non. True: le jeu est en pause. False: le
+	 * jeu n'est pas en pause.
+	 */
+	public boolean pause = false;
 	private Pane layer;
 	private Input input;
-	public int gameover=0;
+	/** Défini si la partie est fini ou non. */
+	public int gameover = Settings.NEUTRAL_ID;
 
+	/**
+	 * initialise la carte, fait apparaitre les chateaux pratiquement aléatoirement.
+	 * 
+	 * @param nb_castles nombre de chateaux
+	 * @param layer      la scène javafx
+	 * @param in         la gestion des input
+	 * @param w          la taille de la grille
+	 * @param h          la hauteur de la grille
+	 */
 	public Battlefield(int nb_castles, Pane layer, Input in, int w, int h) {
 		this.castles = new ArrayList<Castle>();
 		this.soldiers = new ArrayList<Soldier>();
 
-		this.width = w;
-		this.height = h;
+		this.width = w - 40;
+		this.height = h - 40;
 
 		this.input = in;
-		this.layer=layer;
+		this.layer = layer;
 
 		Random rnd = new Random();
-		Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-		int i = nb_castles; boolean base = true;
+		Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+		int i = nb_castles;
+		boolean base = true;
 
-		// if (nb_castles%2 == 1) {
-		// 	Castle c = new Castle(0, Settings.NEUTRAL_ID, this.layer, this.width/2, this.height/2, Direction(rnd.nextInt(4)));
-		// 	this.castles.ass(c);
-		// 	i++;
-		// }
 		while (i > 0 && i != 1) {
 			if (base) {
 				int x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-				int y = rnd.nextInt(this.height/2 - Settings.SIZE_CASTLE) + this.height/2;
+				int y = rnd.nextInt(this.height / 2 - Settings.SIZE_CASTLE) + this.height / 2;
 
 				Castle c = new Castle(i, Settings.ALLY_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
-				c = new Castle(i, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+				c = new Castle(i - 1, Settings.ENNEMY_ID, this.layer, (this.width - x), (this.height - y),
+						dirs[rnd.nextInt(4)]);
 				this.castles.add(c);
 
 				base = false;
 			} else {
-				int x = this.width/2, y = this.height/2;
+				int x = this.width / 2, y = this.height / 2;
 				boolean pos_ok = false;
 
 				while (i > 0 && !pos_ok) {
 					x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-					y = rnd.nextInt(this.height/2 - Settings.SIZE_CASTLE) + this.height/2;
-
+					y = rnd.nextInt(this.height / 2 - Settings.SIZE_CASTLE) + this.height / 2;
+					pos_ok = true;
 					for (Castle c : this.castles)
-						if (c.distance(x,y) > Settings.SIZE_CASTLE) pos_ok = true;
+						if (c.distance(x, y) < 100)
+							pos_ok = false;
 				}
 
 				Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, x, y, dirs[rnd.nextInt(4)]);
+				c.initNeutral();
 				this.castles.add(c);
-				c = new Castle(i, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y), dirs[rnd.nextInt(4)]);
+				c = new Castle(i - 1, Settings.NEUTRAL_ID, this.layer, (this.width - x), (this.height - y),
+						dirs[rnd.nextInt(4)]);
+				c.initNeutral();
 				this.castles.add(c);
 			}
 
 			i -= 2;
 		}
-
 		if (i == 1) {
-			Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, this.width/2, this.height/2, dirs[rnd.nextInt(4)]);
+			Castle c = new Castle(i, Settings.NEUTRAL_ID, this.layer, this.width / 2, this.height / 2,
+					dirs[rnd.nextInt(4)]);
+			c.initNeutral();
 			this.castles.add(c);
 		}
-		// while (i < nb_castles) {
-		// 	int owner = (i == 0) ? Settings.ALLY_ID : ((i == 1) ? Settings.ENNEMY_ID : Settings.NEUTRAL_ID);
-		//
-		// 	int x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-		// 	int y = rnd.nextInt(this.height - Settings.SIZE_CASTLE);
-		//
-		// 	Direction d = dirs[rnd.nextInt(4)];
-		//
-		// 	boolean pos_ok = false;
-		// 	while (i > 0 && !pos_ok) {
-		// 		x = rnd.nextInt(this.width - Settings.SIZE_CASTLE);
-		// 		y = rnd.nextInt(this.height - Settings.SIZE_CASTLE);
-		//
-		// 		if (i == 1) {
-		// 			if (this.castles.get(0).distance(x,y) < Settings.SIZE_CASTLE*5)
-		// 				pos_ok = true;
-		// 		} else {
-		// 			for (Castle c : this.castles) {
-		// 				if (c.distance(x,y) > Settings.SIZE_CASTLE) pos_ok = true;
-		// 			}
-		// 		}
-		//
-		// 	}
-		//
-		// 	Castle c = new Castle(i, owner, this.layer, x, y, d);
-		// 	this.castles.add(c);
-		// 	i++;
-		// }
 	}
 
+	public Battlefield(Pane layer, Input in,ArrayList<Castle> c, ArrayList<Soldier> s) {
+		this.castles=(ArrayList<Castle>) c.clone();
+		this.soldiers= (ArrayList<Soldier>) s.clone();
+		this.width= Settings.GAME_WIDTH;
+		this.height= Settings.GAME_HEIGHT;
+		this.layer=layer;
+		this.input=in;
+	}
+	/**
+	 * Retourne un chateau .
+	 * 
+	 * @param id l'identité du chateau.
+	 * @return le chateau , ou null si il n'a pas été trouvé.
+	 */
 	public Castle getCastle(int id) {
 		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
@@ -116,16 +124,32 @@ public class Battlefield {
 		return null;
 	}
 
+	/**
+	 * retourne une liste de chateau.
+	 * 
+	 * @param id l'identité du chateau
+	 * @return la liste des chateaux
+	 */
 	public ArrayList<Castle> getCastles(int id) {
 		ArrayList<Castle> res = new ArrayList<Castle>();
-		for (int i=0; i < this.castles.size(); i++) {
+		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
-			if (c.getId() != id) res.add(c);
+			if (c.getId() != id)
+				res.add(c);
 		}
 		return res;
 	}
-	public ArrayList<Castle> getCastles() { return this.getCastles(-1); }
 
+	public ArrayList<Castle> getCastles() {
+		return this.getCastles(-1);
+	}
+
+	/**
+	 * recherche un soldat spécifique
+	 * 
+	 * @param id le numéro du soldat.
+	 * @return le soldat si il est trouvé, sinon null
+	 */
 	public Soldier getSoldier(int id) {
 		for (int i = 0; i < this.soldiers.size(); i++) {
 			Soldier s = this.soldiers.get(i);
@@ -135,33 +159,42 @@ public class Battlefield {
 		return null;
 	}
 
-	public ArrayList<Soldier> getSoldiers() { return this.soldiers; }
+	/**
+	 * renvoie la liste des soldats présents dans ce chateau.
+	 * 
+	 * @return la liste des soldats présents dans ce chateau.
+	 */
+	public ArrayList<Soldier> getSoldiers() {
+		return this.soldiers;
+	}
 
+	/**
+	 * Met à jour la position des soldats, l'état de la partie ( gameover ou non ),
+	 * raffraichi la production et le trésor des chateaux
+	 */
 	public void update() {
-		int allycount=0;
-		int enemycount=0;
+		int allycount = 0;
+		int enemycount = 0;
 
 		for (int i = 0; i < this.castles.size(); i++) {
 			Castle c = this.castles.get(i);
 			switch (c.getOwner()) {
-				case Settings.ALLY_ID:
-					allycount++;
-					break;
-				case Settings.ENNEMY_ID:
-					enemycount++;
-					break;
+			case Settings.ALLY_ID:
+				allycount++;
+				break;
+			case Settings.ENNEMY_ID:
+				enemycount++;
+				break;
 			}
 
 			c.updateGold();
 			c.updateProduction(this.layer);
-			// if(c.getTarget()!=-1)
-			// 	c.attack(this.soldiers);
 		}
 
-		if(allycount==0)
-			gameover=Settings.ENNEMY_ID;
-		if(enemycount==0)
-			gameover=Settings.ALLY_ID;
+		if (allycount == 0)
+			gameover = Settings.ENNEMY_ID;
+		if (enemycount == 0)
+			gameover = Settings.ALLY_ID;
 
 		for (int i = 0; i < this.soldiers.size(); i++) {
 			System.out.println("NB_SOLDIERS:" + this.soldiers.size());
@@ -169,23 +202,30 @@ public class Battlefield {
 			Castle c = this.getCastle(s.getTarget());
 			ArrayList<Sprite> avoid = new ArrayList<Sprite>(this.getCastles(s.getOwner()));
 			s.update(c, avoid);
-			if (c.isSoldierIn(s)) {
-				if(c.getOwner() == s.getOwner())
+			if (s.isIn(c)) {
+				if (c.getOwner() == s.getOwner())
 					c.addSoldier(s);
 				c.defend(this.soldiers, s);
+				this.soldiers.remove(i);
 			}
 		}
 	}
 
+	/**
+	 * Gestion des entrées clavier ( pause, reprise du jeu et fermeture de la
+	 * fenêtre ).
+	 * 
+	 * @param input la classe input associé à la scène.
+	 * @param now   la temps actuel associé à la scène.
+	 */
 	public void processInput(Input input, long now) {
 		if (input.isExit()) {
 			Platform.exit();
 			System.exit(0);
-		}
-		else if(input.isPause())
-			pause=true;
-		else if(input.isResume())
-			pause=false;
+		} else if (input.isPause())
+			pause = true;
+		else if (input.isResume())
+			pause = false;
 
 	}
 }
